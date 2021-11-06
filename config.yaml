@@ -1,0 +1,10 @@
+simulations:  
+    flat:
+        topology: flat 10
+        simulations-number: 2
+        reference: 'abc'
+        mutation-rates: [0.001, 0.005 ]
+        coverages: [60]
+        accuracies: [] 
+        length-mean:  1
+        length-sd: 100000
