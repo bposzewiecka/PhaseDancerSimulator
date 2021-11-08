@@ -1,7 +1,5 @@
 # Tree-Seg-Dup
 
-Simulations
-
 ##  Dependencies
 
 To run Tree-Seg-Dup you should have above software installed:
@@ -15,7 +13,7 @@ To run Tree-Seg-Dup you should have above software installed:
 
 ### Step 1: Installation of the required software
 
-The following dependencies should be installed: pbsim2, snakemake, bedtools.
+The following dependencies should be installed: pbsim2, snakemake, bedtools to run Tree-Seg-Dup simulator.
 
 ### Step 2: Cloning the Tree-Seg-Dup repository
 
@@ -32,9 +30,9 @@ Configuration file **config.yaml** must include two dictianaries:
 * *simulations*, that contains parameters of each simulation(s) by the name of each simulation.
 * *regions*, that contains coordinates of regions to simulate from by the name of each region. 
 
-Each entry from the *simulations* dictionary lists parameters of simulation(s):
+Each entry from the *simulations* dictionary must have following properities:
 
-| Property | Description | Value |
+| Property | Description | Values |
 |---|---|---|
 | topology | Type of the tree topology | See: topologies |  
 | simulations-number | Number of the simulations | integer |
@@ -55,9 +53,9 @@ Each entry from the *simulations* dictionary lists parameters of simulation(s):
 * cascading number_of_leaves,
 * random number_of_leaves
 
-Each entry from the *regions* dictionary lists parameters of region(s) to simulate from:
+Each entry from the *regions* dictionary must have following properties:
 
-| Property | Description | Value |
+| Property | Description | Values |
 |---|---|---|
 | coordinates | Region coordinates in format chromosome:from-to | string |  
 | reference | Reference name, from which region will be extracted. If reference name is *ref* the file *ref.fa* should be in the data/refs directory.  | string |
@@ -87,7 +85,7 @@ simulations:
     myrandom:
         topology: 'random 10'
         simulations-number: 4
-        reference: 'chr1_30'
+        region: 'chr1_30'
         mutation-rates: [0.001, 0.005]
         chemistry: 'P6C4'
         coverages: [40, 60, 80]
@@ -95,7 +93,7 @@ simulations:
         length-mean: 18000
         length-sd: 3000
         type: 'all'
-region:
+regions:
     chr1_30:
        coordinates: 'chr1:30000000-30200000'
        reference: 'hg38'
@@ -123,6 +121,9 @@ To start the Snakemake workflow, the following line of code should be executed w
 ```
 snakemake --cores number_of_threads
 ```
+
+## Output
+
 
 ## References
 
