@@ -38,14 +38,14 @@ Each entry from the *simulations* dictionary lists parameters of simulation(s):
 |---|---|---|
 | topology | Type of tree topology | See: topologies |  
 | simulations-number | Number of simulation | integer |
-| region | Name of the region from the *regions* dictianary | string - key from ** dictionary |
+| region | Name of the region from the *regions* dictianary | string - key from *regions* dictionary |
 | mutation-rates | List of probabilities  | list of probabilities |
 | chemistry | HMM model of quality code for chemistry  | P4C2,  P5C,  P6C4,  R103,  R94,  R95  |
 | coverages | list of simulated coverages | list of integers |
-| accuracies | list of simulated read accuracies | list of numbers from range [70-100] |
+| accuracies | list of simulated read accuracies | list of numbers from range 70-100 |
 | length-mean | Mean of simulated read length  | integer |
 | length-sd | Standard deviation of simulatef read length | integer |
-| type | | leaves, all |
+| type | simulate all region from tree topoloy or only leaves | all, leaves |
 
 
 ### Topologies
@@ -107,7 +107,7 @@ Reference genomes used for simulations should be placed in the *data/refs* direc
 Symbolic links to reference genomes can be also used.
 Fasta file or symbolic link to it should have a *.fa* extension.
 
-The following command can be executed to download hg38 build of the human genome.
+The following command can be executed to download hg38 human genome build.
 
 ```
 mkdir -p data/refs
