@@ -5,7 +5,7 @@ To account for a complex history of the formation of segmental duplications **Tr
 **Tree-Seg-Dup** outputs:
 
 * image presenting tree topology.
-* XML file storing tree tolopology.
+* XML file storing tree topology.
 * information about the mutations for every node of the tree (in *vcf* format).
 * reads simulated for leaves or all nodes (depending on the settings).
  
@@ -34,30 +34,30 @@ git clone https://github.com/bposzewiecka/tree-seg-dup.git
 
 ### Step 3: Creating the configuration file
 
-Configuration file **config.yaml** must include two dictianaries:
+Configuration file **config.yaml** must include two dictionaries:
 
 * *simulations*, that contains parameters of each simulation(s) by the name of each simulation.
-* *regions*, that contains coordinates of regions to simulate from by the name of each region. 
+* *regions*, that contains coordinates of regions to simulate from by the name of each region.
 
-Each entry from the *simulations* dictionary must have the following properities:
+Each entry from the *simulations* dictionary must have the following properties:
 
 | Property | Description | Values |
 |---|---|---|
 | topology | Type of the tree topology | See: topologies |  
 | simulations-number | Number of the simulations | integer |
-| region | Name of the region from the *regions* dictianary | string - key from *regions* dictionary |
+| region | Name of the region from the *regions* dictionary | string - key from *regions* dictionary |
 | mutation-rates | List of probabilities  | list of probabilities |
 | chemistry | HMM model of quality code for chemistry | P4C2, P5C, P6C4, R103, R94, R95 |
 | coverages | List of the simulated coverages | list of integers |
 | accuracies | List of the simulated reads accuracies | list of numbers from range 70-100 |
 | length-mean | Mean of the simulated reads length  | integer |
 | length-sd | Standard deviation of simulated reads length | integer |
-| type | Simulate all region from tree topoloy or only leaves? | all, leaves |
+| type | Simulate  from all tree nodes or only leaves? | all, leaves |
 
 ### Topologies
-  
+ 
 Tree topologies can be simulated using 4 topology types: flat, cascading, bifurcating and random.
-  
+ 
 | |  Flat  |  Cascading |
 |---|---|---|
 | Topology | ![Flat topology](/flat.png?raw=true "Flat topology") | ![Cascading topology](/cascading.png?raw=true "Cascading topology") |
@@ -67,7 +67,7 @@ Tree topologies can be simulated using 4 topology types: flat, cascading, bifurc
 | |  Bifurcating  |  Random |
 |---|---|---|
 | Topology | ![Bifurcating topology](/bifurcating.png?raw=true "Bifurcating topology") | ![Random topology](/randomtree.png?raw=true "Random topology") |
-| |  **bifurcating** nodes_multiplier_level_1 nodes_multiplier_level_2 nodes_multiplier_level_3 ... | **random** number_of_leaves |
+| Property |  **bifurcating** nodes_multiplier_level_1 nodes_multiplier_level_2 nodes_multiplier_level_3 ... | **random** number_of_leaves |
 | Example value | bifurcating 2 3 2 | random 5 |
 
 Each entry from the *regions* dictionary must have the following properties:
