@@ -23,44 +23,44 @@ def get_output_files_reads_simulation(name, pattern):
        
 rule main:
     input:
-        get_output_files_contig_simulation('flat', 'data/simulations/{name}/sim-{sim_number}/tree.{reference}.{name}.sim-{sim_number}.png'),
-        get_output_files_reads_simulation('flat', 'data/simulations/{name}/sim-{sim_number}/{reference}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/regions.{reference}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x.fastq')
+        [ get_output_files_contig_simulation(name, 'data/simulations/{name}/sim-{sim_number}/tree.{region}.{name}.sim-{sim_number}.png') for name in config['simulations'].keys() ],
+        [ get_output_files_reads_simulation(name, 'data/simulations/{name}/sim-{sim_number}/{region}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/{region}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x.fastq') for name in config['simulations'].keys() ]
 
 rule simulate_trees_and_mutate:
     input:
-        reference = 'data/input/{reference}.fasta'
+        region = 'data/input/{region}.fasta'
     output:
-        tree_png = 'data/simulations/{name}/sim-{sim_number}/tree.{reference}.{name}.sim-{sim_number}.png',
-        tree_xml = 'data/simulations/{name}/sim-{sim_number}/tree.{reference}.{name}.sim-{sim_number}.xml',
-        fasta_all = 'data/simulations/{name}/sim-{sim_number}/regions.{reference}.{name}.sim-{sim_number}.all.fasta',
-        fasta_leaves = 'data/simulations/{name}/sim-{sim_number}/regions.{reference}.{name}.sim-{sim_number}.leaves.fasta'
+        tree_png = 'data/simulations/{name}/sim-{sim_number}/tree.{region}.{name}.sim-{sim_number}.png',
+        tree_xml = 'data/simulations/{name}/sim-{sim_number}/tree.{region}.{name}.sim-{sim_number}.xml',
+        fasta_all = 'data/simulations/{name}/sim-{sim_number}/coordinatess.{region}.{name}.sim-{sim_number}.all.fasta',
+        fasta_leaves = 'data/simulations/{name}/sim-{sim_number}/coordinatess.{region}.{name}.sim-{sim_number}.leaves.fasta'
     params:
-        vcf_pattern_fn = lambda wildcards: 'data/simulations/{name}/sim-{sim_number}/SEQ-{{seq_number}}.{reference}.{name}.sim-{sim_number}.vcf'.format(**wildcards)
+        vcf_pattern_fn = lambda wildcards: 'data/simulations/{name}/sim-{sim_number}/SEQ-{{seq_number}}.{region}.{name}.sim-{sim_number}.vcf'.format(**wildcards)
     run:	
         parameters = config['simulations'][wildcards.name]
         topology_string = parameters['topology']
         probabilities = parameters['mutation-rates']     
 
         tree = generate_tree(**get_topology_and_sizes(topology_string))
-        reference = str(get_fasta_record(input.reference).seq).upper()
+        region = str(get_fasta_record(input.region).seq).upper()
         
-        mutate_sequences(reference, tree, probabilities, output.fasta_all, output.fasta_leaves, params.vcf_pattern_fn)
+        mutate_sequences(region, tree, probabilities, output.fasta_all, output.fasta_leaves, params.vcf_pattern_fn)
 
         save_tree(tree, output.tree_xml)
         plot_tree(tree, output.tree_png)        
 
 rule simulate_reads:
     input:
-        ref = 'data/simulations/{name}/sim-{sim_number}/regions.{reference}.{name}.sim-{sim_number}.{type}.fasta',
+        ref = 'data/simulations/{name}/sim-{sim_number}/coordinatess.{region}.{name}.sim-{sim_number}.{type}.fasta',
         model = PBSIM_MODELS_PATH + '{chemistry}.model'
     output:
-        'data/simulations/{name}/sim-{sim_number}/{reference}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/regions.{reference}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x.fastq' 
+        'data/simulations/{name}/sim-{sim_number}/{region}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/{region}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x.fastq' 
     params:
-        sim_dir = 'data/simulations/{name}/sim-{sim_number}/{reference}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/simulated_reads',
+        sim_dir = 'data/simulations/{name}/sim-{sim_number}/{region}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/simulated_reads',
         length_mean = lambda wildcards:  str(config['simulations'][wildcards.name]['length-mean']),
         length_sd = lambda wildcards:  str(config['simulations'][wildcards.name]['length-sd'])
     log:
-        pbsim = 'data/simulations/{name}/sim-{sim_number}/{reference}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/logs/pbsim/pbsim.log'	
+        pbsim = 'data/simulations/{name}/sim-{sim_number}/{region}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/logs/pbsim/pbsim.log'	
     shell:
         " mkdir -p  {params.sim_dir}; "
         " cd {params.sim_dir}; "
@@ -75,17 +75,17 @@ rule simulate_reads:
 
 rule get_bed:
     output:
-        bed = 'data/input/{reference}.bed'
+        bed = 'data/input/{region}.bed'
     params:
-        region = lambda wildcards: config['references'][wildcards.reference]['region'].replace(':', '\t').replace('-', '\t')
+        coordinates = lambda wildcards: config['regions'][wildcards.region]['coordinates'].replace(':', '\t').replace('-', '\t')
     shell:
-        "echo '{params.region}' > {output.bed}"
+        "echo '{params.coordinates}' > {output.bed}"
 
-rule get_fasta_from_reference:
+rule get_fasta_from_region:
     input:
-        reference = lambda wildcards: 'data/refs/{reference}.fa'.format(reference = config['references'][wildcards.reference]['reference']),
-        bed = 'data/input/{reference}.bed'
+        region = lambda wildcards: 'data/refs/{region}.fa'.format(region = config['regions'][wildcards.region]['reference']),
+        bed = 'data/input/{region}.bed'
     output:
-        fasta = 'data/input/{reference}.fasta'
+        fasta = 'data/input/{region}.fasta'
     shell:
-        "bedtools getfasta -fi {input.reference} -bed {input.bed} > {output.fasta}"       
+        "bedtools getfasta -fi {input.region} -bed {input.bed} > {output.fasta}"       
