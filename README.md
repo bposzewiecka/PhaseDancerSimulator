@@ -36,16 +36,16 @@ Each entry from the *simulations* dictionary lists parameters of simulation(s):
 
 | Property | Description | Value |
 |---|---|---|
-| topology | Type of tree topology | See: topologies |  
-| simulations-number | Number of simulation | integer |
+| topology | Type of the tree topology | See: topologies |  
+| simulations-number | Number of the simulations | integer |
 | region | Name of the region from the *regions* dictianary | string - key from *regions* dictionary |
 | mutation-rates | List of probabilities  | list of probabilities |
-| chemistry | HMM model of quality code for chemistry  | P4C2,  P5C,  P6C4,  R103,  R94,  R95  |
-| coverages | list of simulated coverages | list of integers |
-| accuracies | list of simulated read accuracies | list of numbers from range 70-100 |
-| length-mean | Mean of simulated read length  | integer |
-| length-sd | Standard deviation of simulatef read length | integer |
-| type | simulate all region from tree topoloy or only leaves | all, leaves |
+| chemistry | HMM model of quality code for chemistry | P4C2, P5C, P6C4, R103, R94, R95 |
+| coverages | List of the simulated coverages | list of integers |
+| accuracies | List of the simulated reads accuracies | list of numbers from range 70-100 |
+| length-mean | Mean of the simulated reads length  | integer |
+| length-sd | Standard deviation of simulated reads length | integer |
+| type | Simulate all region from tree topoloy or only leaves? | all, leaves |
 
 
 ### Topologies
