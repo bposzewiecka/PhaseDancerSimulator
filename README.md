@@ -58,7 +58,9 @@ Each entry of *simulations* dictionary lists parameters of simulation(s).
 
 The following *yaml* file can be created to simulate duplication of two different topology types. First set of parameters *myflat* simulate 
 one topology tree with root and 10 leaves. Second set of parameters *myrandom* simulate 4 random topology trees with 10 leaves.
-In both the same 
+
+In both simulations the same input region is used. For each simulation *reference* parameter is equal to *"chr1_30"*. 
+In the dictianary *references* the name (*'chr1_30'*) is used to specify the region from the *hg38* genome build used for the simulations.
 
 ```yaml
 simulations:
@@ -90,11 +92,22 @@ references:
        reference: 'hg38'
 ```
 
-### Step 4: 
+### Step 4: Copy the reference genomes used for simulation(s) to appropiate ditectory (or create symbolic link to it)
+
+Reference genomes used for sinmulations should be placed in the *data/refs* directory. Fasta file shoud have *.fa* extension.
+
+The following command can be exectued to download hg38 build of the human genome.
+
+```
+mkdir -p data/refs
+cd data/refs
+wget https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
+gunzip hg38.fa.gz
+```
 
 ### Step 5: Starting the Snakemake workflow
 
-To start the main algorithm, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that workflow can use.
+To start the Snakemake workflow, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that workflow can use.
 
 ```
 snakemake --cores number_of_threads 
@@ -102,5 +115,5 @@ snakemake --cores number_of_threads
 
 ## References
 
-* our article
+* Our article
 * [Resolving multicopy duplications *de novo* using polyploid phasing](https://pubmed.ncbi.nlm.nih.gov/28808695/)
