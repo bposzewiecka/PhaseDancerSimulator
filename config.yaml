@@ -1,8 +1,8 @@
 simulations:  
-    flat:
+    my_flat:
         topology: 'flat 10'
-        simulations-number: 2
-        reference: 'abc'
+        simulations-number: 1
+        region: 'chr1_30'
         mutation-rates: [0.001, 0.005]
         chemistry: 'P6C4'
         coverages: [40, 60, 80]
@@ -10,7 +10,18 @@ simulations:
         length-mean: 18000
         length-sd: 3000
         type: 'leaves' 
-references:
-    abc:
+    my_random:
+        topology: 'random 10'
+        simulations-number: 4
+        region: 'chr1_30'
+        mutation-rates: [0.001, 0.005]
+        chemistry: 'P6C4'
+        coverages: [40, 60, 80]
+        accuracies: [85, 90, 95]
+        length-mean: 18000
+        length-sd: 3000
+        type: 'all'
+regions:
+    chr1_30:
        region: 'chr1:30000000-30200000'
        reference: 'hg38'
