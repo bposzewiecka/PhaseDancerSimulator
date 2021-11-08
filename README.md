@@ -104,7 +104,7 @@ region:
 
 Reference genomes used for simulations should be placed in the *data/refs* directory.
 Symbolic links to reference genomes can be also used.
-Fasta file or symbolic link to it should have *.fa* extension.
+Fasta file or symbolic link to it should have a *.fa* extension.
 
 The following command can be executed to download hg38 build of the human genome.
 
