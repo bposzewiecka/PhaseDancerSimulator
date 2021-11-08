@@ -1,6 +1,13 @@
-# Tree-Seg-Dup
+# Tree-Seg-Dup - Simulator of collapsed segmental duplications
 
+To account for a complex history of the formation of segmental duplications **Tree-Seg-Dup** simulates such regions based on the tree topology. Fragment of the reference genome is assigned to the root of the tree. Child sequences are created by copying a parent node sequence and mutating each base at a fixed rate per base. Than, long-reads (PacBio or Oxford Nanopore) are simulated using PBSIM2.
 
+**Tree-Seg-Dup** outputs:
+
+* image presenting tree topology.
+* XML file storing tree tolopology.
+* information about the mutations for every node of the tree (in *vcf* format).
+* reads simulated for leaves or all node (depending on the settings).
 
 ##  Dependencies
 
