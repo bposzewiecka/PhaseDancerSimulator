@@ -1,5 +1,7 @@
 # Tree-Seg-Dup
 
+
+
 ##  Dependencies
 
 To run Tree-Seg-Dup you should have above software installed:
@@ -23,7 +25,7 @@ To clone Tree-Seg-Dup repository, the following line should be executed:
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
 ```
 
-### Step 4: Creating the configuration file
+### Step 3: Creating the configuration file
 
 Configuration file **config.yaml** must include two dictianaries:
 
@@ -47,6 +49,8 @@ Each entry from the *simulations* dictionary must have following properities:
 
 
 ### Topologies
+
+
 
 * flat number_of_leaves,
 * bifurcating list_of_numbers,
@@ -99,13 +103,13 @@ regions:
        reference: 'hg38'
 ```
 
-### Step 4: Copying the reference genomes used for simulation(s) to the appropriate directory
+### Step 4: Placing the reference (or symbolic link to it) genomes used for simulation(s) in the appropriate directory
 
 Reference genomes used for simulations should be placed in the *data/refs* directory.
 Symbolic links to reference genomes can be also used.
 Fasta file or symbolic link to it should have a *.fa* extension.
 
-The following command can be executed to download hg38 human genome build.
+The following command can be executed to download *hg38* human genome build.
 
 ```
 mkdir -p data/refs
@@ -116,7 +120,7 @@ gunzip hg38.fa.gz
 
 ### Step 5: Starting the Snakemake workflow
 
-To start the Snakemake workflow, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that workflow can use.
+To start the Snakemake workflow, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that can be used.
 
 ```
 snakemake --cores number_of_threads
