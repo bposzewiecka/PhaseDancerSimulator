@@ -53,8 +53,8 @@ Each entry from the  *simulations* dictionary lists parameters of simulation(s).
 
 | Property | Description | Value |
 |---|---|---|
-| region | | string |  
-| reference | | string |
+| region | Region coordinate in format chromosome:from-to | string |  
+| reference | Reference name, from which region will be extracted. If reference name is *ref* the file *ref.fa* should be in the data/refs directory.  | string |
 
 The following *yaml* file can be created to simulate duplication of two different topology types. First set of parameters *myflat* simulate
 one topology tree with root and 10 leaves. Second set of parameters *myrandom* simulate 4 random topology trees with 10 leaves.
