@@ -29,8 +29,8 @@ git clone https://github.com/bposzewiecka/tree-seg-dup.git
 
 Configuration file **config.yaml** must include two dictianaries:
 
-* *simulation*, that lists parameters of each simulation(s).
-* *regions*, that lists coordinates of regions to simulate from. 
+* *simulations*, that contains parameters of each simulation(s) by the name of each simulation.
+* *regions*, that contains coordinates of regions to simulate from by the name of each region. 
 
 Each entry from the *simulations* dictionary lists parameters of simulation(s):
 
@@ -40,12 +40,13 @@ Each entry from the *simulations* dictionary lists parameters of simulation(s):
 | simulations-number | Number of simulation | integer |
 | region | Name of the region from the *regions* dictianary | string - key from ** dictionary |
 | mutation-rates | List of probabilities  | list of probabilities |
-| chemistry | | |
-| coverages | | list of integers |
-| accuracies | | list of numbers from range [70-100] |
-| length-mean | | integer |
-| length-sd | | integer |
+| chemistry | HMM model of quality code for chemistry  | P4C2,  P5C,  P6C4,  R103,  R94,  R95  |
+| coverages | list of simulated coverages | list of integers |
+| accuracies | list of simulated read accuracies | list of numbers from range [70-100] |
+| length-mean | Mean of simulated read length  | integer |
+| length-sd | Standard deviation of simulatef read length | integer |
 | type | | leaves, all |
+
 
 ### Topologies
 
@@ -100,7 +101,7 @@ region:
        reference: 'hg38'
 ```
 
-### Step 4: Copying the reference genomes used for simulation(s) to appropriate directory
+### Step 4: Copying the reference genomes used for simulation(s) to the appropriate directory
 
 Reference genomes used for simulations should be placed in the *data/refs* directory.
 Symbolic links to reference genomes can be also used.
