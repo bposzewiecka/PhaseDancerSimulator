@@ -11,11 +11,11 @@ To run Tree-Seg-Dup you should have above software installed:
 
 ## Configuration
 
-### Step 1: Installation of required software
+### Step 1: Installation of the required software
 
-The following dependencies should be installed: pbsim2, bedtools.
+The following dependencies should be installed: pbsim2, snakemake, bedtools.
 
-### Step 2: Cloning the PhaseDancer repository
+### Step 2: Cloning the Tree-Seg-Dup repository
 
 To clone Tree-Seg-Dup repository, the following line should be executed:
 
@@ -23,7 +23,7 @@ To clone Tree-Seg-Dup repository, the following line should be executed:
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
 ```
 
-### Step 3: Creating configuration file
+### Step 3: Creating the configuration file
 
 ```yaml
 simulations:
@@ -55,7 +55,7 @@ references:
        reference: 'hg38'
 ```
 
-### Step 4: Starting the snakemake  workflow
+### Step 4: Starting the snakemake workflow
 
 To start the main algorithm, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that workflow can use.
 
