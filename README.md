@@ -1,5 +1,7 @@
 # Tree-Seg-Dup
 
+Simulations 
+
 ##  Dependencies
 
 To run Tree-Seg-Dup you should have above software installed:
@@ -23,11 +25,44 @@ To clone Tree-Seg-Dup repository, the following line should be executed:
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
 ```
 
-### Step 3: Creating the configuration file
+### Step 4: Creating the configuration file
+
+Configuration file **config.yaml** list parameters of each simulation(s) and coordinates of regions to simulate from.
+
+Each entry of *simulations* dictionary lists parameters of simulation(s).
+
+| Property | Description | Value |
+|---|---|---|
+| topology | | See: topologies |  
+| simulations-number | | integer |
+| reference | | string - key from *references* dictionary |
+| muation-rates | | list of probabilities |
+| chemistry | | |
+| coverages |     | list of integers |
+| accuracies | | list fo numbers from range [70-100] |
+| length-mean | | integer |
+| length-sd | | integer |
+| type | | leaves, all  | 
+
+#### Topologies
+
+* flat number_of_leaves, 
+* bifurcating list_of_numbers, 
+* cascading number_of_leaves, 
+* random number_of_leaves 
+
+| Property | Description | Value |
+|---|---|---|
+| region | | string |  
+| reference | | string |
+
+The following *yaml* file can be created to simulate duplication of two different topology types. First set of parameters *myflat* simulate 
+one topology tree with root and 10 leaves. Second set of parameters *myrandom* simulate 4 random topology trees with 10 leaves.
+In both the same 
 
 ```yaml
 simulations:
-    my_flat:
+    myflat:
         topology: 'flat 10'
         simulations-number: 1
         reference: 'chr1_30'
@@ -38,7 +73,7 @@ simulations:
         length-mean: 18000
         length-sd: 3000
         type: 'leaves'
-    my_random:
+    myrandom:
         topology: 'random 10'
         simulations-number: 4
         reference: 'chr1_30'
@@ -55,10 +90,17 @@ references:
        reference: 'hg38'
 ```
 
-### Step 4: Starting the snakemake workflow
+### Step 4: 
+
+### Step 5: Starting the Snakemake workflow
 
 To start the main algorithm, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that workflow can use.
 
 ```
 snakemake --cores number_of_threads 
 ```
+
+## References
+
+* our article
+* [Resolving multicopy duplications *de novo* using polyploid phasing](https://pubmed.ncbi.nlm.nih.gov/28808695/)
