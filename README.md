@@ -1,14 +1,14 @@
 # Tree-Seg-Dup - Simulator of collapsed segmental duplications
 
-To account for a complex history of the formation of segmental duplications **Tree-Seg-Dup** simulates such regions based on the tree topology. Fragment of the reference genome is assigned to the root of the tree. Child sequences are created by copying a parent node sequence and mutating each base at a fixed rate per base. Than, long-reads (PacBio or Oxford Nanopore) are simulated using PBSIM2.
+To account for a complex history of the formation of segmental duplications **Tree-Seg-Dup** simulates such regions based on the tree topology. Fragment of the reference genome is assigned to the root of the tree. Child sequences are created by copying a parent node sequence and mutating each base at a fixed rate per base. Then, long-reads (PacBio or Oxford Nanopore) are simulated using PBSIM2.
 
 **Tree-Seg-Dup** outputs:
 
 * image presenting tree topology.
 * XML file storing tree tolopology.
 * information about the mutations for every node of the tree (in *vcf* format).
-* reads simulated for leaves or all node (depending on the settings).
-
+* reads simulated for leaves or all nodes (depending on the settings).
+ 
 ##  Dependencies
 
 To run Tree-Seg-Dup you should have above software installed:
@@ -39,7 +39,7 @@ Configuration file **config.yaml** must include two dictianaries:
 * *simulations*, that contains parameters of each simulation(s) by the name of each simulation.
 * *regions*, that contains coordinates of regions to simulate from by the name of each region. 
 
-Each entry from the *simulations* dictionary must have following properities:
+Each entry from the *simulations* dictionary must have the following properities:
 
 | Property | Description | Values |
 |---|---|---|
@@ -54,29 +54,28 @@ Each entry from the *simulations* dictionary must have following properities:
 | length-sd | Standard deviation of simulated reads length | integer |
 | type | Simulate all region from tree topoloy or only leaves? | all, leaves |
 
-
 ### Topologies
   
-|  Flat  |  Cascading |
-|---|---|
-| ![Flat topology](/flat.png?raw=true "Flat topology") | ![Cascading topology](/cascading.png?raw=true "Cascading topology") |
+Tree topologies can be simulated using 4 topology types: flat, cascading, bifurcating and random.
+  
+| |  Flat  |  Cascading |
+|---|---|---|
+| Topology | ![Flat topology](/flat.png?raw=true "Flat topology") | ![Cascading topology](/cascading.png?raw=true "Cascading topology") |
+| Property | **flat** number_of_leaves | **cascading** number_of_leaves |
+| Example value | flat 6 | cascading 6 |
 
-|  Bifurcating  |  Random |
-|---|---|
-| ![Bifurcating topology](/bifurcating.png?raw=true "Bifurcating topology") | ![Random topology](/randomtree.png?raw=true "Random topology")
+| |  Bifurcating  |  Random |
+|---|---|---|
+| Topology | ![Bifurcating topology](/bifurcating.png?raw=true "Bifurcating topology") | ![Random topology](/randomtree.png?raw=true "Random topology") |
+| |  **bifurcating** nodes_multiplier_level_1 nodes_multiplier_level_2 nodes_multiplier_level_3 ... | **random** number_of_leaves |
+| Example value | bifurcating 2 3 2 | random 5 |
 
-* flat number_of_leaves,
-* bifurcating list_of_numbers,
-* cascading number_of_leaves,
-* random number_of_leaves
-
-Each entry from the *regions* dictionary must have following properties:
+Each entry from the *regions* dictionary must have the following properties:
 
 | Property | Description | Values |
 |---|---|---|
 | coordinates | Region coordinates in format chromosome:from-to | string |  
 | reference | Reference name, from which region will be extracted. If reference name is *ref* the file *ref.fa* should be in the data/refs directory.  | string |
-
 
 ### Example configuration file
 
@@ -138,9 +137,6 @@ To start the Snakemake workflow, the following line of code should be executed w
 ```
 snakemake --cores number_of_threads
 ```
-
-## Output
-
 
 ## References
 
