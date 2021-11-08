@@ -9,7 +9,7 @@ def get_sample_name(node):
 
     return 'sample' + str(node)
 
-def mutate_sequences(reference, tree, probabilities, fasta_fn, vcf_pattern_fn):
+def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_fn, vcf_pattern_fn):
 
     mutated_sequences = {}
 
@@ -40,14 +40,14 @@ def mutate_sequences(reference, tree, probabilities, fasta_fn, vcf_pattern_fn):
        mutations = simulate_mutations(probability, cummulated_mutations)
 
        save_as_vcf(reference, mutations, node, vcf_pattern_fn)
-       mutated_sequences[get_sample_name(node)] = get_mutated_sequence(reference, mutations)
+       mutated_sequences[node] = get_mutated_sequence(reference, mutations)
 
        for child in tree[node]:      
            if child != parent_node:
                mutate_sequences_rec(child, node, mutations)
     
     mutate_sequences_rec(ROOT_NAME, None, {})
-    save_fasta_records(mutated_sequences, fasta_fn)
+    save_mutated_sequences(mutated_sequences, tree, fasta_all_fn, fasta_leaves_fn)
                 
 
 def get_vcf_header(reference, sample_name):
@@ -81,7 +81,7 @@ def get_vcf_record(reference, mutations, node,  i):
 
 def save_as_vcf(reference, mutations, node, seq_pattern_fn):
 
-    vcf_fn = seq_pattern_fn.format(seq_number = node) + '.vcf'
+    vcf_fn = seq_pattern_fn.format(seq_number = node) 
     
     header = get_vcf_header(reference,  get_sample_name(node))
     
@@ -99,3 +99,19 @@ def get_mutated_sequence(reference, mutations):
          mutated_sequence[i] = base
 
     return  ''.join(mutated_sequence)
+
+
+def save_mutated_sequences(mutated_sequences, tree, fasta_all_fn, fasta_leaves_fn):
+
+    all_sequences = {}
+    leaves_sequences = {}
+
+    for node, sequence in  mutated_sequences.items():
+        seq_name = get_sample_name(node)
+        all_sequences[seq_name] = sequence
+     
+        if node != ROOT_NAME and len(tree[node])==1:  
+            leaves_sequences[seq_name] = sequence
+
+    save_fasta_records(all_sequences, fasta_all_fn)
+    save_fasta_records(leaves_sequences, fasta_leaves_fn)  

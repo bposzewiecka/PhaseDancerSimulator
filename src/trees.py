@@ -71,9 +71,9 @@ def generate_bifurcating_tree(sizes):
 def generate_cascading_tree(size):
     
     G = nx.Graph()
-    G.add_node('root')
+    G.add_node(ROOT_NAME)
     
-    parent_node = 'root'
+    parent_node = ROOT_NAME
     new_node = 0
     
     for _ in range(size):

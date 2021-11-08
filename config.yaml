@@ -1,10 +1,16 @@
 simulations:  
     flat:
-        topology: flat 10
+        topology: 'flat 10'
         simulations-number: 2
         reference: 'abc'
-        mutation-rates: [0.001, 0.005 ]
-        coverages: [60]
-        accuracies: [] 
-        length-mean:  1
-        length-sd: 100000
+        mutation-rates: [0.001, 0.005]
+        chemistry: 'P6C4'
+        coverages: [40, 60, 80]
+        accuracies: [85, 90, 95] 
+        length-mean: 18000
+        length-sd: 3000
+        type: 'leaves' 
+references:
+    abc:
+       region: 'chr1:30000000-30200000'
+       reference: 'hg38'
