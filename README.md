@@ -56,8 +56,14 @@ Each entry from the *simulations* dictionary must have following properities:
 
 
 ### Topologies
+  
+|  Flat  |  Cascading |
+|---|---|
+| ![Flat topology](/flat.png?raw=true "Flat topology") | ![Cascading topology](/cascading.png?raw=true "Cascading topology") |
 
-
+|  Bifurcating  |  Random |
+|---|---|
+| ![Bifurcating topology](/bifurcating.png?raw=true "Bifurcating topology") | ![Random topology](/randomtree.png?raw=true "Random topology")
 
 * flat number_of_leaves,
 * bifurcating list_of_numbers,
