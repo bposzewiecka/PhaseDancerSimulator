@@ -27,34 +27,42 @@ git clone https://github.com/bposzewiecka/tree-seg-dup.git
 
 ### Step 4: Creating the configuration file
 
-Configuration file **config.yaml** list parameters of each simulation(s) and coordinates of regions to simulate from.
+Configuration file **config.yaml** must include two dictianaries:
 
-Each entry from the  *simulations* dictionary lists parameters of simulation(s).
+* *simulation*, that lists parameters of each simulation(s).
+* *regions*, that lists coordinates of regions to simulate from. 
+
+Each entry from the *simulations* dictionary lists parameters of simulation(s):
 
 | Property | Description | Value |
 |---|---|---|
-| topology | | See: topologies |  
-| simulations-number | | integer |
-| reference | | string - key from *references* dictionary |
-| mutation-rates | | list of probabilities |
+| topology | Type of tree topology | See: topologies |  
+| simulations-number | Number of simulation | integer |
+| region | Name of the region from the *regions* dictianary | string - key from ** dictionary |
+| mutation-rates | List of probabilities  | list of probabilities |
 | chemistry | | |
-| coverages |     | list of integers |
+| coverages | | list of integers |
 | accuracies | | list of numbers from range [70-100] |
 | length-mean | | integer |
 | length-sd | | integer |
-| type | | leaves, all  |
+| type | | leaves, all |
 
-#### Topologies
+### Topologies
 
 * flat number_of_leaves,
 * bifurcating list_of_numbers,
 * cascading number_of_leaves,
 * random number_of_leaves
 
+Each entry from the *regions* dictionary lists parameters of region(s) to simulate from:
+
 | Property | Description | Value |
 |---|---|---|
-| region | Region coordinate in format chromosome:from-to | string |  
+| coordinates | Region coordinates in format chromosome:from-to | string |  
 | reference | Reference name, from which region will be extracted. If reference name is *ref* the file *ref.fa* should be in the data/refs directory.  | string |
+
+
+### Example configuration file
 
 The following *yaml* file can be created to simulate duplication of two different topology types. First set of parameters *myflat* simulate
 one topology tree with root and 10 leaves. Second set of parameters *myrandom* simulate 4 random topology trees with 10 leaves.
@@ -67,7 +75,7 @@ simulations:
     myflat:
         topology: 'flat 10'
         simulations-number: 1
-        reference: 'chr1_30'
+        region: 'chr1_30'
         mutation-rates: [0.001, 0.005]
         chemistry: 'P6C4'
         coverages: [40, 60, 80]
@@ -86,9 +94,9 @@ simulations:
         length-mean: 18000
         length-sd: 3000
         type: 'all'
-references:
+region:
     chr1_30:
-       region: 'chr1:30000000-30200000'
+       coordinates: 'chr1:30000000-30200000'
        reference: 'hg38'
 ```
 
