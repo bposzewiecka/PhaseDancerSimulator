@@ -1,6 +1,6 @@
 # Tree-Seg-Dup
 
-Simulations 
+Simulations
 
 ##  Dependencies
 
@@ -29,38 +29,38 @@ git clone https://github.com/bposzewiecka/tree-seg-dup.git
 
 Configuration file **config.yaml** list parameters of each simulation(s) and coordinates of regions to simulate from.
 
-Each entry of *simulations* dictionary lists parameters of simulation(s).
+Each entry from the  *simulations* dictionary lists parameters of simulation(s).
 
 | Property | Description | Value |
 |---|---|---|
 | topology | | See: topologies |  
 | simulations-number | | integer |
 | reference | | string - key from *references* dictionary |
-| muation-rates | | list of probabilities |
+| mutation-rates | | list of probabilities |
 | chemistry | | |
 | coverages |     | list of integers |
-| accuracies | | list fo numbers from range [70-100] |
+| accuracies | | list of numbers from range [70-100] |
 | length-mean | | integer |
 | length-sd | | integer |
-| type | | leaves, all  | 
+| type | | leaves, all  |
 
 #### Topologies
 
-* flat number_of_leaves, 
-* bifurcating list_of_numbers, 
-* cascading number_of_leaves, 
-* random number_of_leaves 
+* flat number_of_leaves,
+* bifurcating list_of_numbers,
+* cascading number_of_leaves,
+* random number_of_leaves
 
 | Property | Description | Value |
 |---|---|---|
 | region | | string |  
 | reference | | string |
 
-The following *yaml* file can be created to simulate duplication of two different topology types. First set of parameters *myflat* simulate 
+The following *yaml* file can be created to simulate duplication of two different topology types. First set of parameters *myflat* simulate
 one topology tree with root and 10 leaves. Second set of parameters *myrandom* simulate 4 random topology trees with 10 leaves.
 
-In both simulations the same input region is used. For each simulation *reference* parameter is equal to *"chr1_30"*. 
-In the dictianary *references* the name (*'chr1_30'*) is used to specify the region from the *hg38* genome build used for the simulations.
+In both simulations the same input region is used. For each simulation *reference* parameter is equal to *"chr1_30"*.
+In the dictionary *references* the name (*'chr1_30'*) is used to specify the region from the *hg38* genome build used for the simulations.
 
 ```yaml
 simulations:
@@ -92,11 +92,13 @@ references:
        reference: 'hg38'
 ```
 
-### Step 4: Copy the reference genomes used for simulation(s) to appropiate ditectory (or create symbolic link to it)
+### Step 4: Copying the reference genomes used for simulation(s) to appropriate directory
 
-Reference genomes used for sinmulations should be placed in the *data/refs* directory. Fasta file shoud have *.fa* extension.
+Reference genomes used for simulations should be placed in the *data/refs* directory.
+Symbolic links to reference genomes can be also used.
+Fasta file or symbolic link to it should have *.fa* extension.
 
-The following command can be exectued to download hg38 build of the human genome.
+The following command can be executed to download hg38 build of the human genome.
 
 ```
 mkdir -p data/refs
@@ -110,7 +112,7 @@ gunzip hg38.fa.gz
 To start the Snakemake workflow, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that workflow can use.
 
 ```
-snakemake --cores number_of_threads 
+snakemake --cores number_of_threads
 ```
 
 ## References
