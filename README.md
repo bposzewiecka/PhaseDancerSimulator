@@ -5,7 +5,7 @@ To account for a complex history of the formation of segmental duplications **Tr
 **Tree-Seg-Dup** outputs:
 
 * image presenting tree topology.
-* XML file storing tree topology.
+* XML file storing tree topology ([gexf](https://gephi.org/gexf/format/)).
 * information about the mutations for every node of the tree (in *vcf* format).
 * reads simulated for leaves or all nodes (depending on the *type* setting).
  
@@ -47,7 +47,7 @@ Each entry from the *simulations* dictionary must have the following properties:
 | simulations-number | Number of the simulations | integer |
 | region | Name of the region from the *regions* dictionary | string - key from *regions* dictionary |
 | mutation-rates | List of probabilities  | list of probabilities |
-| chemistry | HMM model of quality code for chemistry | P4C2, P5C, P6C4, R103, R94, R95 |
+| chemistry | HMM model of quality code for chemistry. See: chemistries |  P4C2, P5C3, P6C4, R103, R94, R95 |
 | coverages | List of the simulated coverages | list of integers |
 | accuracies | List of the simulated reads accuracies | list of numbers from range 70-100 |
 | length-mean | Mean of the simulated reads length  | integer |
@@ -66,7 +66,7 @@ Tree topologies can be simulated using 4 topology types: flat, cascading, bifurc
 
 | |  Bifurcating  |  Random |
 |---|---|---|
-| Topology | ![Bifurcating topology](/images/bifurcating.png?raw=true "Bifurcating topology") | ![Random topology](/images/randomtree.png?raw=true "Random topology") |
+| Topology | ![Bifurcating topology](/images/bifurcating.png?raw=true "Bifurcating topology") | ![Random topology](/images/random.png?raw=true "Random topology") |
 | Property format |  **bifurcating** nodes_multiplier_level_1 nodes_multiplier_level_2 nodes_multiplier_level_3 ... | **random** number_of_leaves |
 | Example value | bifurcating 2 3 2 | random 5 |
 
@@ -76,6 +76,21 @@ Each entry from the *regions* dictionary must have the following properties:
 |---|---|---|
 | coordinates | Region coordinates in format chromosome:from-to | string |  
 | reference | Reference name, from which region will be extracted. If reference name is *ref* the file *ref.fa* should be in the data/refs directory.  | string |
+
+
+### Chemistries
+
+| Name |  Technology  | 
+|---|---|
+| P6C4 | PacBio | 
+| P5C3| PacBio | 
+| P4C2 | PacBio | 
+| R103 | OxfordNanopore | 
+| R95 | OxfordNanopore | 
+| R94 | OxfordNanopore | 
+
+
+,  , , ,  
 
 ### Example configuration file
 
