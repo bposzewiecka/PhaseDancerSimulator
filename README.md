@@ -115,7 +115,7 @@ regions:
        reference: 'hg38'
 ```
 
-### Step 4: Placing the reference genomes (or symbolic link to them) used for simulation(s) in the appropriate directory
+### Step 4: Placing the reference genomes (or symbolic link to them) used for simulations in the appropriate directory
 
 Reference genomes used for simulations should be placed in the *data/refs* directory.
 Symbolic links to reference genomes can be also used.
