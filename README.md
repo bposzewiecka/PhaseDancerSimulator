@@ -87,7 +87,6 @@ Each entry from the *regions* dictionary must have the following properties:
 
 | Property | Description | Values |
 |---|---|---|
-
 | reference | Reference name, from which region will be extracted. If reference name is *ref* the file *ref.fa* should be in the data/refs directory.  | string |
 | chrom | Region chromosome | string |  
 | start | Region start coordinate | number |
