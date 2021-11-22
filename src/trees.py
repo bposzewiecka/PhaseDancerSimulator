@@ -40,7 +40,7 @@ def generate_tree(topology,  sizes):
     elif topology == TREE_CASCADING:
         tree = generate_cascading_tree(sizes[0])
     elif topology == TREE_RANDOM:
-        tree = generate_random(sizes[0])
+        tree = generate_random_tree(sizes[0])
     else:
         raise Exception(f'{topology} No such tree topology')
         
@@ -76,7 +76,7 @@ def generate_cascading_tree(size):
     parent_node = ROOT_NAME
     new_node = 0
     
-    for _ in range(size):
+    for _ in range(size - 1):
       
         G.add_edge(new_node, parent_node)
         new_node += 1
@@ -93,10 +93,14 @@ def generate_random_tree(size):
     G.add_node(ROOT_NAME)
     nodes = [ROOT_NAME]
     new_node = 0
+    number_of_leaves = 0
     
-    for _ in range(size):
+    while number_of_leaves < size:
         
         random_parent = nodes[random.randrange(len(nodes))]
+
+        if len(G[random_parent]) > 1:
+            number_of_leaves += 1
         
         G.add_edge(new_node, random_parent)
         nodes.append(new_node)
