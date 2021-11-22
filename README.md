@@ -126,7 +126,9 @@ simulations:
         type: 'all'
 regions:
     chr1_30:
-       coordinates: 'chr1:30000000-30200000'
+       chrom: 'chr1'
+       start: 30000000
+       end: 30200000
        reference: 'hg38'
 ```
 
