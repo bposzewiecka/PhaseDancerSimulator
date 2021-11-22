@@ -47,7 +47,7 @@ Each entry from the *simulations* dictionary must have the following properties:
 | simulations-number | Number of the simulations | integer |
 | region | Name of the region from the *regions* dictionary | string - key from *regions* dictionary |
 | mutation-rates | List of probabilities  | list of probabilities |
-| chemistry | HMM model of quality code for chemistry | P4C2, P5C, P6C4, R103, R94, R95 |
+| chemistry | HMM model of quality code for chemistry. See: chemistries |  P4C2, P5C, P6C4, R103, R94, R95 |
 | coverages | List of the simulated coverages | list of integers |
 | accuracies | List of the simulated reads accuracies | list of numbers from range 70-100 |
 | length-mean | Mean of the simulated reads length  | integer |
@@ -76,6 +76,21 @@ Each entry from the *regions* dictionary must have the following properties:
 |---|---|---|
 | coordinates | Region coordinates in format chromosome:from-to | string |  
 | reference | Reference name, from which region will be extracted. If reference name is *ref* the file *ref.fa* should be in the data/refs directory.  | string |
+
+
+### Chemistries
+
+| Name |  Technology  | 
+|---|---|
+| P6C4 | PacBio | 
+| P5C3| PacBio | 
+| P4C2 | PacBio | 
+| R103 | OxfordNanopore | 
+| R95 | OxfordNanopore | 
+| R94 | OxfordNanopore | 
+
+
+,  , , ,  
 
 ### Example configuration file
 
