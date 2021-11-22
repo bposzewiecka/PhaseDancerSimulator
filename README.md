@@ -47,7 +47,7 @@ Each entry from the *simulations* dictionary must have the following properties:
 | simulations-number | Number of the simulations | integer |
 | region | Name of the region from the *regions* dictionary | string - key from *regions* dictionary |
 | mutation-rates | List of probabilities  | list of probabilities |
-| chemistry | HMM model of quality code for chemistry. See: chemistries |  P4C2, P5C, P6C4, R103, R94, R95 |
+| chemistry | HMM model of quality code for chemistry. See: chemistries |  P4C2, P5C3, P6C4, R103, R94, R95 |
 | coverages | List of the simulated coverages | list of integers |
 | accuracies | List of the simulated reads accuracies | list of numbers from range 70-100 |
 | length-mean | Mean of the simulated reads length  | integer |
