@@ -1,6 +1,6 @@
 # Tree-Seg-Dup - Simulator of collapsed segmental duplications
 
-To account for a complex history of the formation of segmental duplications **Tree-Seg-Dup** simulates such regions based on the tree topology. Fragment of the reference genome is assigned to the root of the tree. Child sequences are created by copying a parent node sequence and mutating each base at a fixed rate per base. Then, long-reads (PacBio or Oxford Nanopore) are simulated using PBSIM2.
+To account for a complex history of the formation of segmental duplications **Tree-Seg-Dup** simulates such regions based on the tree topology. Fragment of the reference genome is assigned to the root of the tree. Child sequences are created by copying a parent node sequence and mutating each base at a fixed per base rate. Then, long-reads (PacBio or Oxford Nanopore) are simulated using [PBSIM2](https://github.com/yukiteruono/pbsim2).
 
 **Tree-Seg-Dup** outputs:
 
@@ -14,7 +14,7 @@ To account for a complex history of the formation of segmental duplications **Tr
 To run Tree-Seg-Dup you should have above software installed:
 
 * python3
-* [pbsim2](https://github.com/yukiteruono/pbsim2)
+* [PBSIM2](https://github.com/yukiteruono/pbsim2)
 * [snakemake](https://snakemake.readthedocs.io/en/stable/)
 * bedtools
 
