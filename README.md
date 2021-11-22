@@ -54,6 +54,19 @@ Each entry from the *simulations* dictionary must have the following properties:
 | length-sd | Standard deviation of simulated reads length | integer |
 | type | Simulate  from all tree nodes or only leaves? | all, leaves |
 
+### Chemistries
+
+Reads are simulated using FIC-HMM model for  chemistries of PacBio and Nanopore. 
+
+| Name |  Technology  | 
+|---|---|
+| P6C4 | PacBio | 
+| P5C3| PacBio | 
+| P4C2 | PacBio | 
+| R103 | Nanopore | 
+| R95 | Nanopore | 
+| R94 | Nanopore | 
+
 ### Topologies
  
 Tree topologies can be simulated using 4 topology types: flat, cascading, bifurcating and random.
@@ -76,18 +89,6 @@ Each entry from the *regions* dictionary must have the following properties:
 |---|---|---|
 | coordinates | Region coordinates in format chromosome:from-to | string |  
 | reference | Reference name, from which region will be extracted. If reference name is *ref* the file *ref.fa* should be in the data/refs directory.  | string |
-
-
-### Chemistries
-
-| Name |  Technology  | 
-|---|---|
-| P6C4 | PacBio | 
-| P5C3| PacBio | 
-| P4C2 | PacBio | 
-| R103 | OxfordNanopore | 
-| R95 | OxfordNanopore | 
-| R94 | OxfordNanopore | 
 
 ### Example configuration file
 
