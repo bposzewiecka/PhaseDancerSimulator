@@ -30,7 +30,7 @@ def get_topology_and_sizes(s):
     sizes = list(map(int, s[1:]))
     
     if topology in (TREE_FLAT, TREE_CASCADING, TREE_RANDOM) and len(sizes) != 1:
-        raise Exception(f'Only one number should be given to denote the size of the "{topology_name}" tree.')
+        raise Exception('Only one number should be given to denote the size of the "{topology_name}" tree.'.format(topology_name = topology_name))
         
     return {'topology': topology, 'sizes': sizes} 
 
