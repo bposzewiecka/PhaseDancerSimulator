@@ -81,7 +81,7 @@ Tree topologies can be simulated using 4 topology types: flat, cascading, bifurc
 |---|---|---|
 | Topology | ![Bifurcating topology](/images/bifurcating.png?raw=true "Bifurcating topology") | ![Random topology](/images/random.png?raw=true "Random topology") |
 | Property format |  **bifurcating** nodes_multiplier_level_1 nodes_multiplier_level_2 nodes_multiplier_level_3 ... | **random** number_of_leaves |
-| Example value | bifurcating 2 3 2 | random 5 |
+| Example value | bifurcating 2 3 2 | random 6 |
 
 Each entry from the *regions* dictionary must have the following properties:
 
