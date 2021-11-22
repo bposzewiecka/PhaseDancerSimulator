@@ -60,13 +60,13 @@ Tree topologies can be simulated using 4 topology types: flat, cascading, bifurc
  
 | |  Flat  |  Cascading |
 |---|---|---|
-| Topology | ![Flat topology](/flat.png?raw=true "Flat topology") | ![Cascading topology](/cascading.png?raw=true "Cascading topology") |
+| Topology | ![Flat topology](/images/flat.png?raw=true "Flat topology") | ![Cascading topology](/images/cascading.png?raw=true "Cascading topology") |
 | Property format | **flat** number_of_leaves | **cascading** number_of_leaves |
 | Example value | flat 6 | cascading 6 |
 
 | |  Bifurcating  |  Random |
 |---|---|---|
-| Topology | ![Bifurcating topology](/bifurcating.png?raw=true "Bifurcating topology") | ![Random topology](/randomtree.png?raw=true "Random topology") |
+| Topology | ![Bifurcating topology](/images/bifurcating.png?raw=true "Bifurcating topology") | ![Random topology](/images/randomtree.png?raw=true "Random topology") |
 | Property format |  **bifurcating** nodes_multiplier_level_1 nodes_multiplier_level_2 nodes_multiplier_level_3 ... | **random** number_of_leaves |
 | Example value | bifurcating 2 3 2 | random 5 |
 
