@@ -132,7 +132,7 @@ gunzip hg38.fa.gz
 
 ### Step 5: Starting the Snakemake workflow
 
-To start the Snakemake workflow, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that can be used.
+To start the Snakemake workflow, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that can be used for simulations.
 
 ```
 snakemake --cores number_of_threads
