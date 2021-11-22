@@ -32,8 +32,8 @@ rule simulate_trees_and_mutate:
     output:
         tree_png = 'data/simulations/{name}/sim-{sim_number}/tree.{region}.{name}.sim-{sim_number}.png',
         tree_xml = 'data/simulations/{name}/sim-{sim_number}/tree.{region}.{name}.sim-{sim_number}.xml',
-        fasta_all = 'data/simulations/{name}/sim-{sim_number}/coordinatess.{region}.{name}.sim-{sim_number}.all.fasta',
-        fasta_leaves = 'data/simulations/{name}/sim-{sim_number}/coordinatess.{region}.{name}.sim-{sim_number}.leaves.fasta'
+        fasta_all = 'data/simulations/{name}/sim-{sim_number}/mutated-sequence.{region}.{name}.sim-{sim_number}.all.fasta',
+        fasta_leaves = 'data/simulations/{name}/sim-{sim_number}/mutated-sequence.{region}.{name}.sim-{sim_number}.leaves.fasta'
     params:
         vcf_pattern_fn = lambda wildcards: 'data/simulations/{name}/sim-{sim_number}/SEQ-{{seq_number}}.{region}.{name}.sim-{sim_number}.vcf'.format(**wildcards)
     run:	
@@ -51,7 +51,7 @@ rule simulate_trees_and_mutate:
 
 rule simulate_reads:
     input:
-        ref = 'data/simulations/{name}/sim-{sim_number}/coordinatess.{region}.{name}.sim-{sim_number}.{type}.fasta',
+        ref = 'data/simulations/{name}/sim-{sim_number}/mutated-sequences.{region}.{name}.sim-{sim_number}.{type}.fasta',
         model = PBSIM_MODELS_PATH + '{chemistry}.model'
     output:
         'data/simulations/{name}/sim-{sim_number}/{region}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/{region}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x.fastq' 
