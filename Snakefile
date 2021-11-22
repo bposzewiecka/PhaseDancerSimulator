@@ -32,8 +32,8 @@ rule simulate_trees_and_mutate:
     output:
         tree_png = 'data/simulations/{name}/sim-{sim_number}/tree.{region}.{name}.sim-{sim_number}.png',
         tree_xml = 'data/simulations/{name}/sim-{sim_number}/tree.{region}.{name}.sim-{sim_number}.xml',
-        fasta_all = 'data/simulations/{name}/sim-{sim_number}/mutated-sequence.{region}.{name}.sim-{sim_number}.all.fasta',
-        fasta_leaves = 'data/simulations/{name}/sim-{sim_number}/mutated-sequence.{region}.{name}.sim-{sim_number}.leaves.fasta'
+        fasta_all = 'data/simulations/{name}/sim-{sim_number}/mutated-sequences.{region}.{name}.sim-{sim_number}.all.fasta',
+        fasta_leaves = 'data/simulations/{name}/sim-{sim_number}/mutated-sequences.{region}.{name}.sim-{sim_number}.leaves.fasta'
     params:
         vcf_pattern_fn = lambda wildcards: 'data/simulations/{name}/sim-{sim_number}/SEQ-{{seq_number}}.{region}.{name}.sim-{sim_number}.vcf'.format(**wildcards)
     run:	
@@ -73,19 +73,21 @@ rule simulate_reads:
         " cd ../../../../../.. ; "
         " cat {params.sim_dir}/*.fastq > {output} "
 
-rule get_bed:
+rule get_bed_reference:
     output:
-        bed = 'data/input/{region}.bed'
+        bed = 'data/input/{region}/{region}.bed'
     params:
-        coordinates = lambda wildcards: config['regions'][wildcards.region]['coordinates'].replace(':', '\t').replace('-', '\t')
+        chromosome = lambda wildcards: config['regions'][wildcards.region]['chrom'],
+        start = lambda wildcards: config['regions'][wildcards.region]['start'],
+        end = lambda wildcards: config['regions'][wildcards.region]['end']
     shell:
-        "echo '{params.coordinates}' > {output.bed}"
+        "echo '{params.chromosome}\t{params.start}\t{params.end}' > {output.bed}"
 
 rule get_fasta_from_region:
     input:
-        region = lambda wildcards: 'data/refs/{region}.fa'.format(region = config['regions'][wildcards.region]['reference']),
-        bed = 'data/input/{region}.bed'
+        region = lambda wildcards: 'data/refs/{reference}.fa'.format(reference = config['regions'][wildcards.region]['reference']),
+        bed = 'data/input/{region}/{region}-{name}.bed'
     output:
-        fasta = 'data/input/{region}.fasta'
+        fasta = 'data/input/{region}/{region}-{name}.fasta'
     shell:
-        "bedtools getfasta -fi {input.region} -bed {input.bed} > {output.fasta}"       
+        'bedtools getfasta -fi {input.region} -bed {input.bed} > {output.fasta}'
