@@ -89,9 +89,6 @@ Each entry from the *regions* dictionary must have the following properties:
 | R95 | OxfordNanopore | 
 | R94 | OxfordNanopore | 
 
-
-,  , , ,  
-
 ### Example configuration file
 
 The following *yaml* file can be created to simulate duplication of two different topology types. First set of parameters *myflat* simulate
