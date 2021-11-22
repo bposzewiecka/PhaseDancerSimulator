@@ -7,7 +7,7 @@ To account for a complex history of the formation of segmental duplications **Tr
 * image presenting tree topology.
 * XML file storing tree topology.
 * information about the mutations for every node of the tree (in *vcf* format).
-* reads simulated for leaves or all nodes (depending on the settings).
+* reads simulated for leaves or all nodes (depending on the *type* setting).
  
 ##  Dependencies
 
