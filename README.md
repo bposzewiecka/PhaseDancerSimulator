@@ -140,7 +140,7 @@ snakemake --cores number_of_threads
 
 ## Note
 
-The **Tree-Seg-Dup** simulator is based on the idea of simulating segmental duplications based on tree topologies proposed in  [^2].
+The **Tree-Seg-Dup** simulator is based on the idea of simulating segmental duplications derived from tree topologies proposed in  [^2].
 Simulator was used to validate and benchmark PhaseDancer [^1] assembler.
 
 
