@@ -7,7 +7,8 @@ configfile: "config.yaml"
 
 seed = 785
 
-PBSIM_MODELS_PATH = '/home/basia/bin/pbsim2/data/'
+PBSIM_MODELS_PATH = 'pbsim2/data/'
+PBSIM_BIN_PATH = 'pbsim2/bin/pbsim'
 
 def get_output_files_contig_simulation(name, pattern):
     parameters = config['simulations'][name]
@@ -63,14 +64,15 @@ rule simulate_reads:
         pbsim = 'data/simulations/{name}/sim-{sim_number}/{region}.{name}.sim-{sim_number}.{type}.{chemistry}.{accuracy}.{coverage}x/logs/pbsim/pbsim.log'	
     shell:
         " mkdir -p  {params.sim_dir}; "
+        " export SIM_PWD=`pwd`;"
         " cd {params.sim_dir}; "
-        " pbsim --hmm_model {input.model} "
+        " $SIM_PWD/" + PBSIM_BIN_PATH  + " --hmm_model $SIM_PWD/{input.model} "
         " --length-mean {params.length_mean} " 
         " --length-sd {params.length_sd} "
         " --prefix sim --id-prefix sim "
         " --accuracy-mean 0.{wildcards.accuracy} "
-        " --depth {wildcards.coverage} --seed " + str(seed) + " ../../../../../../{input.ref} 2> ../../../../../../{log.pbsim}; "
-        " cd ../../../../../.. ; "
+        " --depth {wildcards.coverage} --seed " + str(seed) + " $SIM_PWD/{input.ref} 2> $SIM_PWD/{log.pbsim}; "
+        " cd $SIM_PWD ; "
         " cat {params.sim_dir}/*.fastq > {output} "
 
 rule get_bed_reference:
