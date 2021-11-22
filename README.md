@@ -5,7 +5,7 @@ To account for a complex history of the formation of segmental duplications **Tr
 **Tree-Seg-Dup** outputs:
 
 * image presenting tree topology.
-* XML file storing tree topology.
+* XML file storing tree topology ([gexf](https://gephi.org/gexf/format/)).
 * information about the mutations for every node of the tree (in *vcf* format).
 * reads simulated for leaves or all nodes (depending on the *type* setting).
  
