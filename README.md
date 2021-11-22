@@ -14,7 +14,6 @@ To account for a complex history of the formation of segmental duplications **Tr
 To run Tree-Seg-Dup you should have above software installed:
 
 * python3
-* [PBSIM2](https://github.com/yukiteruono/pbsim2)
 * [snakemake](https://snakemake.readthedocs.io/en/stable/)
 * bedtools
 
@@ -24,12 +23,13 @@ To run Tree-Seg-Dup you should have above software installed:
 
 The following dependencies should be installed: pbsim2, snakemake, bedtools to run Tree-Seg-Dup simulator.
 
-### Step 2: Cloning the Tree-Seg-Dup repository
+### Step 2: Cloning the Tree-Seg-Dup repository and install PBSIM2 submodule
 
-To clone Tree-Seg-Dup repository, the following line should be executed:
+To clone Tree-Seg-Dup repository and install PBSIM2 submodule, the following lines should be executed:
 
 ```
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
+./install.sh
 ```
 
 ### Step 3: Creating the configuration file
