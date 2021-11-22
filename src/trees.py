@@ -99,7 +99,7 @@ def generate_random_tree(size):
         
         random_parent = nodes[random.randrange(len(nodes))]
 
-	if len(G[random_parent]) != 1 or random_parent == 'root':
+        if len(G[random_parent]) != 1 or random_parent == 'root':
             number_of_leaves += 1
         
         G.add_edge(new_node, random_parent)
