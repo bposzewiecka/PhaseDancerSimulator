@@ -91,22 +91,30 @@ def generate_random_tree(size):
     
     G = nx.Graph()
     G.add_node(ROOT_NAME)
-    nodes = [ROOT_NAME]
     new_node = 0
-    number_of_leaves = 0
+    leaves_no = 1
     
-    while number_of_leaves < size:
+    while leaves_no < size:
         
-        random_parent = nodes[random.randrange(len(nodes))]
-
-        if len(G[random_parent]) != 1 or random_parent == 'root':
-            number_of_leaves += 1
-        
-        G.add_edge(new_node, random_parent)
-        nodes.append(new_node)
-        
-        new_node += 1
-         
+        if size == leaves_no - 1:
+            random_parent = random.choice([ node for node in range(new_node) if len(G[node]) != 1 ] + [ ROOT_NAME ])
+            G.add_edge(new_node, random_parent)
+            new_node += 1 
+        else:
+            random_parent = random.randrange(new_node + 1)
+            
+            if random_parent  == new_node:
+                random_parent = ROOT_NAME 
+                
+            if len(G[random_parent]) == 1 or new_node == 0:
+                G.add_edge(new_node, random_parent)
+                new_node += 1               
+                
+            G.add_edge(new_node, random_parent)
+            new_node += 1 
+                
+        leaves_no += 1
+                
     return G
 
 def save_tree(G, tree_fn):
