@@ -5,9 +5,9 @@ from src.utils import save_fasta_records
 
 CHROM_ID  = 1
 
-def get_sample_name(node):
+def get_name(node):
 
-    return 'sample' + str(node)
+    return 'contig' + str(node)
 
 def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_fn, vcf_pattern_fn):
 
@@ -74,7 +74,7 @@ def get_vcf_record(reference, mutations, node,  i):
         'FILTER': ['PASS'], 
         'INFO': {},
         'FORMAT': ['GT'],
-        'calls': [vcfpy.Call(get_sample_name(node),{'GT': '1/1'})]
+        'calls': [vcfpy.Call(get_name(node),{'GT': '1/1'})]
     }
     
     return  vcfpy.Record(**d)
@@ -83,7 +83,7 @@ def save_as_vcf(reference, mutations, node, seq_pattern_fn):
 
     vcf_fn = seq_pattern_fn.format(seq_number = node) 
     
-    header = get_vcf_header(reference,  get_sample_name(node))
+    header = get_vcf_header(reference,  get_name(node))
     
     with vcfpy.Writer.from_path(vcf_fn, header) as f_vcf:
         for i in  sorted(mutations):
@@ -107,7 +107,7 @@ def save_mutated_sequences(mutated_sequences, tree, fasta_all_fn, fasta_leaves_f
     leaves_sequences = {}
 
     for node, sequence in  mutated_sequences.items():
-        seq_name = get_sample_name(node)
+        seq_name = get_name(node)
         all_sequences[seq_name] = sequence
      
         if node != ROOT_NAME and len(tree[node])==1:  
