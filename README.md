@@ -26,7 +26,7 @@ The following dependencies should be installed: pbsim2, snakemake, bedtools to r
 
 ### Step 2: Cloning the Tree-Seg-Dup repository and installing dependencies
 
-To clone Tree-Seg-Dup repository and install PBSIM2 submodule, the following lines should be executed:
+To clone Tree-Seg-Dup repository and installing dependencies, the following lines should be executed:
 
 ```
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
