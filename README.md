@@ -162,7 +162,7 @@ The **Tree-Seg-Dup** simulator is based on the idea of simulating segmental dupl
 Simulator was used to validate and benchmark PhaseDancer [^1] assembler.
 
 Embdeded software: 
-* [PBSIM2](https://github.com/yukiteruono/pbsim2) - [GNU General Public License v2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+* [PBSIM2](https://github.com/yukiteruono/pbsim2) - [GNU Public License (Version 2)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 * [Samtools](http://www.htslib.org/) - [Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) Licence](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 * [Bedtools](https://bedtools.readthedocs.io/en/latest/) - [GNU Public License (Version 2)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 
