@@ -107,7 +107,7 @@ simulations:
         simulations-number: 1
         region: 'chr1_30'
         mutation-rates: [0.001, 0.005]
-        chemistry: 'P6C4'
+        chemistries: ['P6C4', 'R103']
         coverages: [40, 60, 80]
         accuracies: [85, 90, 95]
         length-mean: 18000
@@ -118,7 +118,7 @@ simulations:
         simulations-number: 4
         region: 'chr1_30'
         mutation-rates: [0.001, 0.005]
-        chemistry: 'P6C4'
+        chemistries: ['P6C4', 'R103']
         coverages: [40, 60, 80]
         accuracies: [85, 90, 95]
         length-mean: 18000
