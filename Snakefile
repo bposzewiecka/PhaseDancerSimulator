@@ -2,7 +2,12 @@ from src.trees import generate_tree, get_topology_and_sizes, save_tree
 from src.tree_images import plot_tree
 from src.mutation_simulator import mutate_sequences
 from src.utils import  get_fasta_record 
-import pysam
+
+try:
+    import pysam
+    from Bio import SeqIO
+except:
+    pass
 
 configfile: "config.yaml"
 
@@ -25,7 +30,8 @@ def get_output_files_reads_simulation(name, pattern):
        
 rule main:
     input:
-        [ get_output_files_contig_simulation(name, 'data/simulations/{name}-sim{sim_number}/tree-{region}-{name}-sim{sim_number}.png') for name in config['simulations'].keys() ],
+        [ get_output_files_contig_simulation(name, 'data/simulations/{name}-sim{sim_number}/tree-{region}-{name}-sim{sim_number}.png') for name in config['simulations'].keys()],
+        [ get_output_files_contig_simulation(name, 'data/simulations/{name}-sim{sim_number}/starts/contigroot-start-mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta') for name in config['simulations'].keys() ],
         [ get_output_files_reads_simulation(name, 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq') for name in config['simulations'].keys() ],
         [ get_output_files_reads_simulation(name, 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.grouped.bam.bai') for name in config['simulations'].keys() ]
 
@@ -77,6 +83,27 @@ rule simulate_reads:
         " cd $SIM_PWD ; "
         " cat {params.sim_dir}/*.fastq > {output} "
 
+rule get_starts_sequences:
+    input:
+        ref = 'data/simulations/{name}-sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta',
+    output:
+        starts = 'data/simulations/{name}-sim{sim_number}/starts/contigroot-start-mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta'
+    params:
+        fn_pattern = lambda wildcards:  'data/simulations/{name}-sim{sim_number}/starts/{{contig}}-start-mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta'.format(**wildcards)
+    run:
+        for record in SeqIO.parse(input.ref, 'fasta'):
+    
+           fn = params.fn_pattern.format(contig=record.name)
+    
+           START = 10000
+           LENGTH = 10000
+    
+           with open(fn, 'w') as f:
+               f.write(f'>{record.name} start={START} length={LENGTH}\n')
+               f.write(str(record.seq[START:START + LENGTH]))
+               f.write('\n')
+             
+
 rule get_bed_reference:
     output:
         bed = 'data/input/{region}-{region}.bed'
@@ -123,7 +150,6 @@ rule add_group_type:
                     read.set_tag('RG', f"sim{simulation_number:03d}")
                     grouped_bam.write(read)
           
-
 rule index_reads:
     input:
         '{name}.bam'	 
