@@ -3,3 +3,5 @@ cd pbsim2
 make
 make check
 make install
+
+cd ../minimap2 && make

@@ -25,8 +25,9 @@ def get_output_files_reads_simulation(name, pattern):
     parameters = config['simulations'][name]
     coverages = parameters['coverages']
     accuracies = parameters['accuracies']
+    chemistries = parameters['chemistries']
     
-    return [ pattern.format(**parameters, name=name, sim_number=i, accuracy=accuracy, coverage=coverage)  for i in range(parameters['simulations-number']) for coverage in coverages for accuracy in accuracies ]
+    return [ pattern.format(**parameters, name=name, sim_number=i, accuracy=accuracy, coverage=coverage, chemistry=chemistry)  for i in range(parameters['simulations-number']) for coverage in coverages for accuracy in accuracies for chemistry in chemistries ]
        
 rule main:
     input:
@@ -103,7 +104,6 @@ rule get_starts_sequences:
                f.write(str(record.seq[START:START + LENGTH]))
                f.write('\n')
              
-
 rule get_bed_reference:
     output:
         bed = 'data/input/{region}-{region}.bed'
@@ -132,7 +132,7 @@ rule map_reads:
     params:
          minimap2_preset = lambda wildcards: 'map-pb' if wildcards.chemistry in [ 'P4C2', 'P5C3', 'P6C4' ] else 'map-ont'
     shell:
-        'minimap2 -ax {params.minimap2_preset} {input.ref} {input.reads} | samtools sort - > {output}'  
+        './minimap2/minimap2 -ax {params.minimap2_preset} {input.ref} {input.reads} | samtools sort - > {output}'  
 
 rule add_group_type:
     input:
