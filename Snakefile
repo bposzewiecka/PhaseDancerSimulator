@@ -15,6 +15,9 @@ seed = 785
 
 PBSIM_MODELS_PATH = 'pbsim2/data/'
 PBSIM_BIN_PATH = 'pbsim2/bin/pbsim'
+SAMTOOLS_BIN_PATH = 'samtools-1.14/samtools'
+BEDTOOLS_BIN_PATH = 'bedtools2/bin/bedtools'
+MINIMAP_BIN_PATH = 'minimap2/minimap2'
 
 def get_output_files_contig_simulation(name, pattern):
     parameters = config['simulations'][name]
@@ -121,25 +124,27 @@ rule get_fasta_from_region:
     output:
         fasta = 'data/input/{region}-{region}.fasta'
     shell:
-        'bedtools getfasta -fi {input.region} -bed {input.bed} > {output.fasta}'
+        './' + BEDTOOLS_BIN_PATH + ' getfasta -fi {input.region} -bed {input.bed} > {output.fasta}'
 
 rule map_reads:
     input:
         ref = 'data/input/{region}-{region}.fasta',
 	reads = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq'
     output:
-        'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam'
+        bam = temp('data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam'),
+        bai = temp('data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam.bai'),
     params:
          minimap2_preset = lambda wildcards: 'map-pb' if wildcards.chemistry in [ 'P4C2', 'P5C3', 'P6C4' ] else 'map-ont'
     shell:
-        './minimap2/minimap2 -ax {params.minimap2_preset} {input.ref} {input.reads} | samtools sort - > {output}'  
+        './' + minimap2/minimap2 + ' -ax {params.minimap2_preset} {input.ref} {input.reads} | samtools sort - > {output.bam}; '
+	'./' + SAMTOOLS_BIN_PATH + ' index {output.bam} '
 
 rule add_group_type:
     input:
-        bam = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam',
-        bai = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam.bai'
+        bam = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam',
+        bai = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam.bai'
     output:
-       bam = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.grouped.bam'
+        bam = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam'
     run:        
         with pysam.AlignmentFile(input.bam, 'rb') as bam:  
 
@@ -156,4 +161,4 @@ rule index_reads:
     output:
        	'{name}.bam.bai'    
     shell:	   
-        'samtools index {input}'
+        './'+ SAMTOOLS_BIN_PATH + ' index {input}'
