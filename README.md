@@ -161,6 +161,7 @@ snakemake --cores number_of_threads
 The **Tree-Seg-Dup** simulator is based on the idea of simulating segmental duplications derived from tree topologies proposed in  [^2].
 Simulator was used to validate and benchmark PhaseDancer [^1] assembler.
 
+Embdeded software [PBSIM2](https://github.com/yukiteruono/pbsim2)
 
 [^1]: [PhaseDancer](https://github.com/bposzewiecka/phaseDancer)
 [^2]: [Resolving multicopy duplications *de novo* using polyploid phasing](https://pubmed.ncbi.nlm.nih.gov/28808695/)
