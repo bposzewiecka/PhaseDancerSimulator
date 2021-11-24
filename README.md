@@ -8,6 +8,7 @@ To account for a complex history of the formation of segmental duplications **Tr
 * XML file storing tree topology ([gexf](https://gephi.org/gexf/format/)).
 * information about the mutations for every node of the tree (in *vcf* format).
 * reads simulated for leaves or all nodes (depending on the *type* setting).
+* reads mapped on the root sequence grouped by node (RG tag)
  
 ##  Dependencies
 
@@ -15,7 +16,7 @@ To run Tree-Seg-Dup you should have above software installed:
 
 * python3
 * [snakemake](https://snakemake.readthedocs.io/en/stable/)
-* bedtools
+
 
 ## Configuration
 
@@ -23,7 +24,7 @@ To run Tree-Seg-Dup you should have above software installed:
 
 The following dependencies should be installed: pbsim2, snakemake, bedtools to run Tree-Seg-Dup simulator.
 
-### Step 2: Cloning the Tree-Seg-Dup repository and install PBSIM2 submodule
+### Step 2: Cloning the Tree-Seg-Dup repository and installing dependencies
 
 To clone Tree-Seg-Dup repository and install PBSIM2 submodule, the following lines should be executed:
 
