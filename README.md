@@ -26,7 +26,7 @@ The following dependencies should be installed: pbsim2, snakemake, bedtools to r
 
 ### Step 2: Cloning the Tree-Seg-Dup repository and installing dependencies
 
-To clone Tree-Seg-Dup repository and install PBSIM2 submodule, the following lines should be executed:
+To clone Tree-Seg-Dup repository and installing dependencies, the following lines should be executed:
 
 ```
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
@@ -161,6 +161,7 @@ snakemake --cores number_of_threads
 The **Tree-Seg-Dup** simulator is based on the idea of simulating segmental duplications derived from tree topologies proposed in  [^2].
 Simulator was used to validate and benchmark PhaseDancer [^1] assembler.
 
+Embdeded software [PBSIM2](https://github.com/yukiteruono/pbsim2)
 
 [^1]: [PhaseDancer](https://github.com/bposzewiecka/phaseDancer)
 [^2]: [Resolving multicopy duplications *de novo* using polyploid phasing](https://pubmed.ncbi.nlm.nih.gov/28808695/)
