@@ -3,11 +3,8 @@ from src.tree_images import plot_tree
 from src.mutation_simulator import mutate_sequences
 from src.utils import  get_fasta_record 
 
-try:
-    import pysam
-    from Bio import SeqIO
-except:
-    pass
+import pysam
+from Bio import SeqIO
 
 configfile: "config.yaml"
 
@@ -18,6 +15,9 @@ PBSIM_BIN_PATH = 'pbsim2/bin/pbsim'
 SAMTOOLS_BIN_PATH = 'samtools-1.14/samtools'
 BEDTOOLS_BIN_PATH = 'bedtools2/bin/bedtools'
 MINIMAP_BIN_PATH = 'minimap2/minimap2'
+
+OUTPUT_DIR = ''
+
 
 def get_output_files_contig_simulation(name, pattern):
     parameters = config['simulations'][name]
@@ -31,22 +31,24 @@ def get_output_files_reads_simulation(name, pattern):
     chemistries = parameters['chemistries']
     
     return [ pattern.format(**parameters, name=name, sim_number=i, accuracy=accuracy, coverage=coverage, chemistry=chemistry)  for i in range(parameters['simulations-number']) for coverage in coverages for accuracy in accuracies for chemistry in chemistries ]
-       
+
+
+ruleorder: map_reads > index_reads
+           
 rule main:
     input:
-        [ get_output_files_contig_simulation(name, 'data/simulations/{name}-sim{sim_number}/tree-{region}-{name}-sim{sim_number}.png') for name in config['simulations'].keys()],
-        [ get_output_files_contig_simulation(name, 'data/simulations/{name}-sim{sim_number}/starts/contigroot-start-mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta') for name in config['simulations'].keys() ],
-        [ get_output_files_reads_simulation(name, 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq') for name in config['simulations'].keys() ],
-        [ get_output_files_reads_simulation(name, 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.grouped.bam.bai') for name in config['simulations'].keys() ]
+        [ get_output_files_contig_simulation(name, OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/tree-{region}-{name}-sim{sim_number}.png') for name in config['simulations'].keys()],
+        [ get_output_files_contig_simulation(name, OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/starts/contigroot-start-mutatedseq-{region}-{name}-sim{sim_number}.fasta') for name in config['simulations'].keys() if 'start-contig' in config['simulations'][name]],
+        [ get_output_files_reads_simulation(name, OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam.bai') for name in config['simulations'].keys() ]
 
 rule simulate_trees_and_mutate:
     input:
-        region = 'data/input/{region}.fasta'
+        region = OUTPUT_DIR + 'data/input/{region}.fasta'
     output:
-        tree_png = 'data/simulations/{name}-sim{sim_number}/tree-{region}-{name}-sim{sim_number}.png',
-        tree_xml = 'data/simulations/{name}-sim{sim_number}/tree-{region}-{name}-sim{sim_number}.xml',
-        fasta_all = 'data/simulations/{name}-sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta',
-        fasta_leaves = 'data/simulations/{name}-sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-leaves.fasta'
+        tree_png = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/tree-{region}-{name}-sim{sim_number}.png',
+        tree_xml = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/tree-{region}-{name}-sim{sim_number}.xml',
+        fasta_all = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta',
+        fasta_leaves = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-leaves.fasta'
     params:
         vcf_pattern_fn = lambda wildcards: 'data/simulations/{name}-sim{sim_number}/SEQ-{{seq_number}}-{region}-{name}-sim{sim_number}.vcf'.format(**wildcards)
     run:	
@@ -64,16 +66,16 @@ rule simulate_trees_and_mutate:
 
 rule simulate_reads:
     input:
-        ref = 'data/simulations/{name}-sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta',
+        ref = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta',
         model = PBSIM_MODELS_PATH + '{chemistry}.model'
     output:
-        'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq' 
+        OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq' 
     params:
-        sim_dir = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/simulated_reads',
+        sim_dir = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/simulated_reads',
         length_mean = lambda wildcards:  str(config['simulations'][wildcards.name]['length-mean']),
         length_sd = lambda wildcards:  str(config['simulations'][wildcards.name]['length-sd'])
     log:
-        pbsim = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/logs/pbsim/pbsim.log'	
+        pbsim = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/logs/pbsim/pbsim.log'	
     shell:
         " mkdir -p  {params.sim_dir}; "
         " export SIM_PWD=`pwd`;"
@@ -89,27 +91,29 @@ rule simulate_reads:
 
 rule get_starts_sequences:
     input:
-        ref = 'data/simulations/{name}-sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta',
+        ref = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta'
     output:
-        starts = 'data/simulations/{name}-sim{sim_number}/starts/contigroot-start-mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta'
+        starts = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/starts/contigroot-start-mutatedseq-{region}-{name}-sim{sim_number}.fasta'
     params:
-        fn_pattern = lambda wildcards:  'data/simulations/{name}-sim{sim_number}/starts/{{contig}}-start-mutatedseq-{region}-{name}-sim{sim_number}-{type}.fasta'.format(**wildcards)
+        fn_pattern = lambda wildcards: OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/starts/{{contig}}-start-mutatedseq-{region}-{name}-sim{sim_number}.fasta'.format(**wildcards)
     run:
         for record in SeqIO.parse(input.ref, 'fasta'):
     
            fn = params.fn_pattern.format(contig=record.name)
-    
-           START = 10000
-           LENGTH = 10000
+            
+           start_contig = config['simulations'][wildcards.name]['start-contig']
+
+           start = start_contig['start']
+           length = start_contig['length']
     
            with open(fn, 'w') as f:
-               f.write(f'>{record.name} start={START} length={LENGTH}\n')
-               f.write(str(record.seq[START:START + LENGTH]))
+               f.write(f'>{record.name} start={start} length={length}\n')
+               f.write(str(record.seq[start:start + length]))
                f.write('\n')
              
 rule get_bed_reference:
     output:
-        bed = 'data/input/{region}-{region}.bed'
+        bed = OUTPUT_DIR + 'data/input/{region}-{region}.bed'
     params:
         chromosome = lambda wildcards: config['regions'][wildcards.region]['chrom'],
         start = lambda wildcards: config['regions'][wildcards.region]['start'],
@@ -119,32 +123,32 @@ rule get_bed_reference:
 
 rule get_fasta_from_region:
     input:
-        region = lambda wildcards: 'data/refs/{reference}.fa'.format(reference = config['regions'][wildcards.region]['reference']),
-        bed = 'data/input/{region}-{region}.bed'
+        region = lambda wildcards: OUTPUT_DIR + 'data/refs/{reference}.fa'.format(reference = config['regions'][wildcards.region]['reference']),
+        bed = OUTPUT_DIR + 'data/input/{region}-{region}.bed'
     output:
-        fasta = 'data/input/{region}-{region}.fasta'
+        fasta = OUTPUT_DIR + 'data/input/{region}-{region}.fasta'
     shell:
         './' + BEDTOOLS_BIN_PATH + ' getfasta -fi {input.region} -bed {input.bed} > {output.fasta}'
 
 rule map_reads:
     input:
-        ref = 'data/input/{region}-{region}.fasta',
-	reads = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq'
+        ref = OUTPUT_DIR + 'data/input/{region}-{region}.fasta',
+	reads = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq'
     output:
-        bam = temp('data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam'),
-        bai = temp('data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam.bai'),
+        bam = temp(OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam'),
+        bai = temp(OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam.bai')
     params:
          minimap2_preset = lambda wildcards: 'map-pb' if wildcards.chemistry in [ 'P4C2', 'P5C3', 'P6C4' ] else 'map-ont'
     shell:
-        './' + minimap2/minimap2 + ' -ax {params.minimap2_preset} {input.ref} {input.reads} | samtools sort - > {output.bam}; '
+        './' + MINIMAP_BIN_PATH + ' -ax {params.minimap2_preset} {input.ref} {input.reads} | samtools sort - > {output.bam}; '
 	'./' + SAMTOOLS_BIN_PATH + ' index {output.bam} '
 
 rule add_group_type:
     input:
-        bam = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam',
-        bai = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam.bai'
+        bam = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam',
+        bai = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam.bai'
     output:
-        bam = 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam'
+        bam = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam'
     run:        
         with pysam.AlignmentFile(input.bam, 'rb') as bam:  
 
