@@ -165,6 +165,7 @@ Embdeded software:
 * [PBSIM2](https://github.com/yukiteruono/pbsim2) - [GNU Public License (Version 2)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 * [Samtools](http://www.htslib.org/) - [Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) Licence](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 * [Bedtools](https://bedtools.readthedocs.io/en/latest/) - [GNU Public License (Version 2)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+* [Minimap2](https://github.com/lh3/minimap2) - [MIT Licence](https://opensource.org/licenses/MIT)
 
 [^1]: [PhaseDancer](https://github.com/bposzewiecka/phaseDancer)
 [^2]: [Resolving multicopy duplications *de novo* using polyploid phasing](https://pubmed.ncbi.nlm.nih.gov/28808695/)
