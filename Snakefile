@@ -18,6 +18,15 @@ MINIMAP_BIN_PATH = 'minimap2/minimap2'
 
 OUTPUT_DIR = ''
 
+PACBIO = 'pacbio'
+NANOPORE = 'nanopore'
+
+def get_technology(chemistry):
+    if chemistry in ['P4C2', 'P5C3', 'P6C4']:
+        return PACBIO
+    if chemistry in ['R103', 'R94', 'R95']:
+        return NANOPORE
+    raise
 
 def get_output_files_contig_simulation(name, pattern):
     parameters = config['simulations'][name]
@@ -72,6 +81,7 @@ rule simulate_reads:
         OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq' 
     params:
         sim_dir = OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/simulated_reads',
+	difference_ratio = lambda wildcards: '6:50:54' if get_technology(wildcards.chemistry) == PACBIO else '23:31:46',
         length_mean = lambda wildcards:  str(config['simulations'][wildcards.name]['length-mean']),
         length_sd = lambda wildcards:  str(config['simulations'][wildcards.name]['length-sd'])
     log:
@@ -85,6 +95,7 @@ rule simulate_reads:
         " --length-sd {params.length_sd} "
         " --prefix sim --id-prefix sim "
         " --accuracy-mean 0.{wildcards.accuracy} "
+	" --difference-ratio {params.difference_ratio}  "
         " --depth {wildcards.coverage} --seed " + str(seed) + " $SIM_PWD/{input.ref} 2> $SIM_PWD/{log.pbsim}; "
         " cd $SIM_PWD ; "
         " cat {params.sim_dir}/*.fastq > {output} "
@@ -138,7 +149,7 @@ rule map_reads:
         bam = temp(OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam'),
         bai = temp(OUTPUT_DIR + 'data/simulations/{name}-sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam.bai')
     params:
-         minimap2_preset = lambda wildcards: 'map-pb' if wildcards.chemistry in [ 'P4C2', 'P5C3', 'P6C4' ] else 'map-ont'
+         minimap2_preset = lambda wildcards: 'map-pb' if get_technology(wildcards.chemistry) == PACBIO else 'map-ont'
     shell:
         './' + MINIMAP_BIN_PATH + ' -ax {params.minimap2_preset} {input.ref} {input.reads} | samtools sort - > {output.bam}; '
 	'./' + SAMTOOLS_BIN_PATH + ' index {output.bam} '
