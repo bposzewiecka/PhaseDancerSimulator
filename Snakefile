@@ -30,17 +30,18 @@ def get_technology(chemistry):
 
 def get_output_files_contig_simulation(name, pattern):
     parameters = config['simulations'][name]
+    regions =  parameters['regions']
 
-    return [ pattern.format(**parameters, name=name, sim_number=i)  for i in range(parameters['simulations-number'])]
+    return [ pattern.format(**parameters, name=name, sim_number=i, region=region)  for i in range(parameters['simulations-number']) for region in regions]
 
 def get_output_files_reads_simulation(name, pattern):
     parameters = config['simulations'][name]
     coverages = parameters['coverages']
     accuracies = parameters['accuracies']
     chemistries = parameters['chemistries']
-    
-    return [ pattern.format(**parameters, name=name, sim_number=i, accuracy=accuracy, coverage=coverage, chemistry=chemistry)  for i in range(parameters['simulations-number']) for coverage in coverages for accuracy in accuracies for chemistry in chemistries ]
-
+    regions = parameters['regions']
+   
+    return [ pattern.format(**parameters, name=name, sim_number=i, accuracy=accuracy, coverage=coverage, chemistry=chemistry, region=region)  for i in range(parameters['simulations-number']) for coverage in coverages for accuracy in accuracies for chemistry in chemistries for region in regions]
 
 ruleorder: map_reads > index_reads
            
@@ -52,7 +53,7 @@ rule main:
 
 rule simulate_trees_and_mutate:
     input:
-        region = OUTPUT_DIR + 'data/input/{region}.fasta'
+        region = OUTPUT_DIR + 'data/input/{region}/{region}.fasta'
     output:
         tree_png = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/tree-{region}-{name}-sim{sim_number}.png',
         tree_xml = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/tree-{region}-{name}-sim{sim_number}.xml',
@@ -124,7 +125,7 @@ rule get_starts_sequences:
              
 rule get_bed_reference:
     output:
-        bed = OUTPUT_DIR + 'data/input/{region}-{region}.bed'
+        bed = OUTPUT_DIR + 'data/input/{region}/{region}.bed'
     params:
         chromosome = lambda wildcards: config['regions'][wildcards.region]['chrom'],
         start = lambda wildcards: config['regions'][wildcards.region]['start'],
@@ -135,15 +136,15 @@ rule get_bed_reference:
 rule get_fasta_from_region:
     input:
         region = lambda wildcards: OUTPUT_DIR + 'data/refs/{reference}.fa'.format(reference = config['regions'][wildcards.region]['reference']),
-        bed = OUTPUT_DIR + 'data/input/{region}-{region}.bed'
+        bed = OUTPUT_DIR + 'data/input/{region}/{region}.bed'
     output:
-        fasta = OUTPUT_DIR + 'data/input/{region}-{region}.fasta'
+        fasta = OUTPUT_DIR + 'data/input/{region}/{region}.fasta'
     shell:
         './' + BEDTOOLS_BIN_PATH + ' getfasta -fi {input.region} -bed {input.bed} > {output.fasta}'
 
 rule map_reads:
     input:
-        ref = OUTPUT_DIR + 'data/input/{region}-{region}.fasta',
+        ref = OUTPUT_DIR + 'data/input/{region}/{region}.fasta',
 	reads = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq'
     output:
         bam = temp(OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.notgrouped.bam'),
