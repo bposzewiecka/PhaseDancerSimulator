@@ -46,7 +46,7 @@ Each entry from the *simulations* dictionary must have the following properties:
 |---|---|---|
 | topology | Type of the tree topology | See: topologies |  
 | simulations-number | Number of the simulations | integer |
-| region | Name of the region from the *regions* dictionary | string - key from *regions* dictionary |
+| region | List of names of the region from the *regions* dictionary | List of strings - keys from *regions* dictionary |
 | mutation-rates | List of probabilities  | list of probabilities |
 | chemistry | HMM model of quality code for chemistry. See: chemistries |  P4C2, P5C3, P6C4, R103, R94, R95 |
 | coverages | List of the simulated coverages | list of integers |
@@ -106,7 +106,7 @@ simulations:
     myflat:
         topology: 'flat 10'
         simulations-number: 1
-        region: 'chr1_30'
+        regions: [ region1, region2 ]
         mutation-rates: [0.001, 0.005]
         chemistries: ['P6C4', 'R103']
         coverages: [40, 60, 80]
@@ -117,7 +117,7 @@ simulations:
     myrandom:
         topology: 'random 10'
         simulations-number: 4
-        region: 'chr1_30'
+        regions: [ region2 ]
         mutation-rates: [0.001, 0.005]
         chemistries: ['P6C4', 'R103']
         coverages: [40, 60, 80]
@@ -126,11 +126,16 @@ simulations:
         length-sd: 3000
         type: 'all'
 regions:
-    chr1_30:
+    region1:
        chrom: 'chr1'
        start: 30000000
-       end: 30200000
+       end: 30500000
        reference: 'hg38'
+    region2:
+       chrom: 'chr2'
+       start: 60000000
+       end: 60500000
+       reference: 'hg38'       
 ```
 
 ### Step 4: Placing the reference genomes (or symbolic link to them) used for simulations in the appropriate directory
