@@ -54,6 +54,8 @@ Each entry from the *simulations* dictionary must have the following properties:
 | length-mean | Mean of the simulated reads length  | integer |
 | length-sd | Standard deviation of simulated reads length | integer |
 | type | Simulate  from all tree nodes or only leaves? | all, leaves |
+| random-prefix-size | Size of random sequence at the beginning of the simulated sequence | integer (default 0) |
+| random-suffix-size | Size of random sequence at the end of the simulated sequence | integer (default 0) |
 
 ### Chemistries
 
