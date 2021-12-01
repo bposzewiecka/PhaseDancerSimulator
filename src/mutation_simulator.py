@@ -3,13 +3,11 @@ import random
 import vcfpy
 from src.utils import save_fasta_records
 
-CHROM_ID  = 1
-
 def get_name(node):
 
     return 'contig' + str(node)
 
-def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_fn, vcf_pattern_fn):
+def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_fn, vcf_pattern_fn, chrom_name):
 
     mutated_sequences = {}
 
@@ -39,7 +37,7 @@ def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_
        tree.nodes[node]['mutation_rate'] = probability
        mutations = simulate_mutations(probability, cummulated_mutations)
 
-       save_as_vcf(reference, mutations, node, vcf_pattern_fn)
+       save_as_vcf(reference, mutations, node, vcf_pattern_fn, chrom_name)
        mutated_sequences[node] = get_mutated_sequence(reference, mutations)
 
        for child in tree[node]:      
@@ -50,22 +48,22 @@ def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_
     save_mutated_sequences(mutated_sequences, tree, fasta_all_fn, fasta_leaves_fn)
                 
 
-def get_vcf_header(reference, sample_name):
+def get_vcf_header(reference, sample_name, chrom_name):
 
     header = vcfpy.Header()
     header.add_line(vcfpy.HeaderLine('fileformat', 'VCFv4.2'))
-    header.add_contig_line(vcfpy.OrderedDict([('ID', CHROM_ID), ('length', len(reference))]))
+    header.add_contig_line(vcfpy.OrderedDict([('ID', chrom_name), ('length', len(reference))]))
     header.add_format_line(vcfpy.OrderedDict([('ID', 'GT'), ('Number', 1), ('Type', 'String'), ('Description', 'Genotype')]))
     header.samples = vcfpy.SamplesInfos(sample_names=[sample_name])
     
     return header
 
-def get_vcf_record(reference, mutations, node,  i):
+def get_vcf_record(reference, mutations, node,  i, chrom_name):
     
     substitution = vcfpy.Substitution('SNV', mutations[i]),
     
     d = { 
-        'CHROM':  CHROM_ID,
+        'CHROM':  chrom_name,
         'POS': i + 1,
         'ID': ['variant' +  str(i + 1)], 
         'REF': reference[i],
@@ -79,15 +77,15 @@ def get_vcf_record(reference, mutations, node,  i):
     
     return  vcfpy.Record(**d)
 
-def save_as_vcf(reference, mutations, node, seq_pattern_fn):
+def save_as_vcf(reference, mutations, node, seq_pattern_fn, chrom_name):
 
     vcf_fn = seq_pattern_fn.format(seq_number = node) 
     
-    header = get_vcf_header(reference,  get_name(node))
+    header = get_vcf_header(reference,  get_name(node), chrom_name)
     
     with vcfpy.Writer.from_path(vcf_fn, header) as f_vcf:
         for i in  sorted(mutations):
-            record = get_vcf_record(reference, mutations,  node,  i)
+            record = get_vcf_record(reference, mutations,  node,  i, chrom_name)
             f_vcf.write_record(record)
 
 

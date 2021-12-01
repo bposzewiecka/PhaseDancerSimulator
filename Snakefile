@@ -69,7 +69,7 @@ rule simulate_trees_and_mutate:
         tree = generate_tree(**get_topology_and_sizes(topology_string))
         region = str(get_fasta_record(input.region).seq).upper()
         
-        mutate_sequences(region, tree, probabilities, output.fasta_all, output.fasta_leaves, params.vcf_pattern_fn)
+        mutate_sequences(region, tree, probabilities, output.fasta_all, output.fasta_leaves, params.vcf_pattern_fn, wildcards.region)
 
         save_tree(tree, output.tree_xml)
         plot_tree(tree, output.tree_png)        
@@ -140,7 +140,7 @@ rule get_fasta_from_region:
     output:
         fasta = OUTPUT_DIR + 'data/input/{region}/{region}.fasta'
     shell:
-        './' + BEDTOOLS_BIN_PATH + ' getfasta -fi {input.region} -bed {input.bed} > {output.fasta}'
+        './' + BEDTOOLS_BIN_PATH + ' getfasta -fi {input.region} -bed {input.bed} > {output.fasta}; sed -i "1s/.*/>{wildcards.region}/" {output.fasta} '
 
 rule map_reads:
     input:
