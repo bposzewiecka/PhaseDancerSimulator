@@ -30,6 +30,7 @@ To clone Tree-Seg-Dup repository and installing dependencies, the following line
 
 ```
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
+cd tree-seg-dup
 ./install.sh
 ```
 
