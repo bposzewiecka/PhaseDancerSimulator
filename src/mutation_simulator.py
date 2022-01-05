@@ -2,7 +2,7 @@ from src.trees import ROOT_NAME
 import random
 import vcfpy
 from src.utils import save_fasta_records
-
+  
 def get_name(node):
 
     return 'contig' + str(node)
