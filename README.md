@@ -10,14 +10,6 @@ To account for a complex history of the formation of segmental duplications **Tr
 * reads simulated for leaves or all nodes (depending on the *type* setting).
 * reads mapped on the root sequence grouped by node (RG tag)
  
-##  Dependencies
-
-To run Tree-Seg-Dup you should have above software installed:
-
-* python3
-* [snakemake](https://snakemake.readthedocs.io/en/stable/)
-
-
 ## Configuration
 
 ### Step 1: Installation of the required software
@@ -31,6 +23,9 @@ To clone Tree-Seg-Dup repository and installing dependencies, the following line
 ```
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
 cd tree-seg-dup
+python3 -m venv tree-seg-dup_venv
+source ree-seg-dup_venv/bin/activate
+pip install -r requirements.txt
 ./install.sh
 ```
 
