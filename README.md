@@ -20,7 +20,7 @@ To clone Tree-Seg-Dup repository and installing dependencies, the following line
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
 cd tree-seg-dup
 python3 -m venv tree-seg-dup_venv
-source ree-seg-dup_venv/bin/activate
+source tree-seg-dup_venv/bin/activate
 pip install -r requirements.txt
 ./install.sh
 ```
