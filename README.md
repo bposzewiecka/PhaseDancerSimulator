@@ -12,11 +12,7 @@ To account for a complex history of the formation of segmental duplications **Tr
  
 ## Configuration
 
-### Step 1: Installation of the required software
-
-The following dependencies should be installed: pbsim2, snakemake, bedtools to run Tree-Seg-Dup simulator.
-
-### Step 2: Cloning the Tree-Seg-Dup repository and installing dependencies
+### Step 1: Cloning the Tree-Seg-Dup repository and installing dependencies
 
 To clone Tree-Seg-Dup repository and installing dependencies, the following lines should be executed:
 
@@ -29,7 +25,7 @@ pip install -r requirements.txt
 ./install.sh
 ```
 
-### Step 3: Creating the configuration file
+### Step 2: Creating the configuration file
 
 Configuration file **config.yaml** must include two dictionaries:
 
@@ -136,7 +132,7 @@ regions:
        reference: 'hg38'       
 ```
 
-### Step 4: Placing the reference genomes (or symbolic link to them) used for simulations in the appropriate directory
+### Step 3: Placing the reference genomes (or symbolic link to them) used for simulations in the appropriate directory
 
 Reference genomes used for simulations should be placed in the *data/refs* directory.
 Symbolic links to reference genomes can be also used.
@@ -151,7 +147,7 @@ wget https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
 gunzip hg38.fa.gz
 ```
 
-### Step 5: Starting the Snakemake workflow
+### Step 4: Starting the Snakemake workflow
 
 To start the Snakemake workflow, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that can be used for simulations.
 
