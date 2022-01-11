@@ -1,7 +1,8 @@
 from src.trees import generate_tree, get_topology_and_sizes, save_tree
 from src.tree_images import plot_tree
 from src.mutation_simulator import mutate_sequences
-from src.utils import  get_fasta_record 
+from src.utils import  get_fasta_record, get_fasta_record_by_name, save_yaml
+from src.validation import get_alignment_results, get_variants_validation_table, hamming_distance
 
 import pysam
 from Bio import SeqIO
@@ -20,6 +21,7 @@ OUTPUT_DIR = ''
 
 PACBIO = 'pacbio'
 NANOPORE = 'nanopore'
+
 
 def get_technology(chemistry):
     if chemistry in ['P4C2', 'P5C3', 'P6C4']:
@@ -49,7 +51,8 @@ rule main:
     input:
         [ get_output_files_contig_simulation(name, OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/tree-{region}-{name}-sim{sim_number}.png') for name in config['simulations'].keys()],
         [ get_output_files_contig_simulation(name, OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/starts/contigroot-start-mutatedseq-{region}-{name}-sim{sim_number}.fasta') for name in config['simulations'].keys() if 'start-contig' in config['simulations'][name]],
-        [ get_output_files_reads_simulation(name, OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam.bai') for name in config['simulations'].keys() ]
+        [ get_output_files_reads_simulation(name, OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam.bai') for name in config['simulations'].keys() ],
+        expand(OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{ttype}-{chemistry}-{accuracy}-{coverage}x/contig{seq_number}.{assembler_name}.{stats}.yaml', name='vsmallflat', sim_number=0, seq_number=0, region ='region0new', ttype= 'leaves', accuracy= 85, chemistry='P6C4', coverage=40, assembler_name='phaseDancer', stats = ['stats', 'variants_stats' ])
 
 rule simulate_trees_and_mutate:
     input:
@@ -60,16 +63,18 @@ rule simulate_trees_and_mutate:
         fasta_all = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta',
         fasta_leaves = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-leaves.fasta'
     params:
-        vcf_pattern_fn = lambda wildcards: 'data/simulations/{name}/sim{sim_number}/SEQ-{{seq_number}}-{region}-{name}-sim{sim_number}.vcf'.format(**wildcards)
+        vcf_pattern_fn = lambda wildcards: 'data/simulations/{name}/sim{sim_number}/contig{{seq_number}}-{region}-{name}-sim{sim_number}.vcf'.format(**wildcards)
     run:	
         parameters = config['simulations'][wildcards.name]
         topology_string = parameters['topology']
         probabilities = parameters['mutation-rates']     
-
+        random_prefix_size = parameters.get('random-prefix-size', 0)
+	random_suffix_size = parameters.get('random-suffix-size', 0)
+        
         tree = generate_tree(**get_topology_and_sizes(topology_string))
         region = str(get_fasta_record(input.region).seq).upper()
         
-        mutate_sequences(region, tree, probabilities, output.fasta_all, output.fasta_leaves, params.vcf_pattern_fn, wildcards.region)
+        mutate_sequences(region, tree, probabilities, output.fasta_all, output.fasta_leaves, params.vcf_pattern_fn, wildcards.region, random_prefix_size, random_suffix_size)
 
         save_tree(tree, output.tree_xml)
         plot_tree(tree, output.tree_png)        
@@ -178,3 +183,34 @@ rule index_reads:
        	'{name}.bam.bai'    
     shell:	   
         './'+ SAMTOOLS_BIN_PATH + ' index {input}'
+
+rule identity_statistics_contig:
+    input:
+        reference = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta',
+        assembly = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/contig{seq_number}.{assembler_name}.fasta'
+    output:
+        stats = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/contig{seq_number}.{assembler_name}.stats.yaml'
+    run:
+         reference = get_fasta_record_by_name(input.reference, 'contig' + wildcards.seq_number) 
+         assembly = get_fasta_record(input.assembly)
+
+         results = get_alignment_results(reference, assembly)
+ 
+         save_yaml(output.stats, { f"contig{wildcards.seq_number}.{wildcards.assembler_name}" : results } )
+
+
+rule variants_statistics_contig:
+    input:
+        reference = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta',
+        assembly = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/contig{seq_number}.{assembler_name}.fasta',
+        vcf = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/contig{seq_number}-{region}-{name}-sim{sim_number}.vcf'
+    output:
+        stats = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/contig{seq_number}.{assembler_name}.variants_stats.yaml'
+    run:
+        contig = 'contig' + wildcards.seq_number	    
+
+        reference = str(get_fasta_record_by_name(input.reference, 'contig' + wildcards.seq_number).seq)
+        assembly = str(get_fasta_record(input.assembly).seq)
+
+        validation_table =  get_variants_validation_table(reference, assembly, contig, input.vcf)
+        save_yaml(output.stats, { f"contig{wildcards.seq_number}.{wildcards.assembler_name}": { "validation-table": validation_table, "hamming-distance": hamming_distance(validation_table) }})

@@ -7,7 +7,7 @@ def get_name(node):
 
     return 'contig' + str(node)
 
-def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_fn, vcf_pattern_fn, chrom_name):
+def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_fn, vcf_pattern_fn, chrom_name, random_prefix_size = 0, random_suffix_size = 0):
 
     mutated_sequences = {}
 
@@ -27,7 +27,7 @@ def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_
             if random.uniform(0, 1) < probability:
 
                 base = random.choice(nucleotides[base])
-                mutations[i] = base
+                mutations[i + random_prefix_size] = base
 
         return  mutations 
             
@@ -37,8 +37,8 @@ def mutate_sequences(reference, tree, probabilities, fasta_all_fn, fasta_leaves_
        tree.nodes[node]['mutation_rate'] = probability
        mutations = simulate_mutations(probability, cummulated_mutations)
 
-       save_as_vcf(reference, mutations, node, vcf_pattern_fn, chrom_name)
-       mutated_sequences[node] = get_mutated_sequence(reference, mutations)
+       save_as_vcf(reference, mutations, node, vcf_pattern_fn, chrom_name, random_prefix_size)
+       mutated_sequences[node] = get_mutated_sequence(reference, mutations, random_prefix_size, random_suffix_size)
 
        for child in tree[node]:      
            if child != parent_node:
@@ -58,7 +58,7 @@ def get_vcf_header(reference, sample_name, chrom_name):
     
     return header
 
-def get_vcf_record(reference, mutations, node,  i, chrom_name):
+def get_vcf_record(reference, mutations, node,  i, chrom_name, random_prefix_size):
     
     substitution = vcfpy.Substitution('SNV', mutations[i]),
     
@@ -66,7 +66,7 @@ def get_vcf_record(reference, mutations, node,  i, chrom_name):
         'CHROM':  chrom_name,
         'POS': i + 1,
         'ID': ['variant' +  str(i + 1)], 
-        'REF': reference[i],
+        'REF': reference[i-random_prefix_size],
         'ALT': substitution,
         'QUAL': '.',
         'FILTER': ['PASS'], 
@@ -77,7 +77,7 @@ def get_vcf_record(reference, mutations, node,  i, chrom_name):
     
     return  vcfpy.Record(**d)
 
-def save_as_vcf(reference, mutations, node, seq_pattern_fn, chrom_name):
+def save_as_vcf(reference, mutations, node, seq_pattern_fn, chrom_name, random_prefix_size):
 
     vcf_fn = seq_pattern_fn.format(seq_number = node) 
     
@@ -85,18 +85,28 @@ def save_as_vcf(reference, mutations, node, seq_pattern_fn, chrom_name):
     
     with vcfpy.Writer.from_path(vcf_fn, header) as f_vcf:
         for i in  sorted(mutations):
-            record = get_vcf_record(reference, mutations,  node,  i, chrom_name)
+            record = get_vcf_record(reference, mutations,  node,  i, chrom_name, random_prefix_size)
             f_vcf.write_record(record)
 
+def generate_random_sequence(size):
 
-def get_mutated_sequence(reference, mutations):
+    nucleotides =  ['A','T', 'G', 'C']
+
+    return ''.join([ random.choice(nucleotides)  for i in range(size)])
+
+
+def get_mutated_sequence(reference, mutations, random_prefix_size, random_suffix_size):
 
     mutated_sequence = list(reference)
 
     for i, base in mutations.items():
-         mutated_sequence[i] = base
+         mutated_sequence[i - random_prefix_size] = base
 
-    return  ''.join(mutated_sequence)
+    random_prefix = generate_random_sequence(random_prefix_size)
+    random_suffix = generate_random_sequence(random_suffix_size)
+    mutated_sequence = ''.join(mutated_sequence)
+
+    return random_prefix + mutated_sequence + random_suffix 
 
 
 def save_mutated_sequences(mutated_sequences, tree, fasta_all_fn, fasta_leaves_fn):
