@@ -10,30 +10,22 @@ To account for a complex history of the formation of segmental duplications **Tr
 * reads simulated for leaves or all nodes (depending on the *type* setting).
 * reads mapped on the root sequence grouped by node (RG tag)
  
-##  Dependencies
-
-To run Tree-Seg-Dup you should have above software installed:
-
-* python3
-* [snakemake](https://snakemake.readthedocs.io/en/stable/)
-
-
 ## Configuration
 
-### Step 1: Installation of the required software
-
-The following dependencies should be installed: pbsim2, snakemake, bedtools to run Tree-Seg-Dup simulator.
-
-### Step 2: Cloning the Tree-Seg-Dup repository and installing dependencies
+### Step 1: Cloning the Tree-Seg-Dup repository and installing dependencies
 
 To clone Tree-Seg-Dup repository and installing dependencies, the following lines should be executed:
 
 ```
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
+cd tree-seg-dup
+python3 -m venv tree-seg-dup_venv
+source tree-seg-dup_venv/bin/activate
+pip install -r requirements.txt
 ./install.sh
 ```
 
-### Step 3: Creating the configuration file
+### Step 2: Creating the configuration file
 
 Configuration file **config.yaml** must include two dictionaries:
 
@@ -140,7 +132,7 @@ regions:
        reference: 'hg38'       
 ```
 
-### Step 4: Placing the reference genomes (or symbolic link to them) used for simulations in the appropriate directory
+### Step 3: Placing the reference genomes (or symbolic link to them) used for simulations in the appropriate directory
 
 Reference genomes used for simulations should be placed in the *data/refs* directory.
 Symbolic links to reference genomes can be also used.
@@ -155,7 +147,7 @@ wget https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
 gunzip hg38.fa.gz
 ```
 
-### Step 5: Starting the Snakemake workflow
+### Step 4: Starting the Snakemake workflow
 
 To start the Snakemake workflow, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that can be used for simulations.
 

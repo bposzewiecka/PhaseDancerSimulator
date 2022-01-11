@@ -1,0 +1,5 @@
+tree-seg-dup_venv/*
+samtools-1.14/*
+bedtools2/*
+__pycache__/
+.snakemake/
