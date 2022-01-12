@@ -157,8 +157,8 @@ The following command can be executed to download *hg38* human genome build.
 ```
 mkdir -p $TREE_SEG_DUP_DATA_DIR/data/refs
 cd $TREE_SEG_DUP_DATA_DIR/data/refs
-wget https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
-gunzip hg38.fa.gz
+wget --directory-prefix=$TREE_SEG_DUP_DATA_DIR  https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
+gunzip $TREE_SEG_DUP_DATA_DIR/hg38.fa.gz
 ```
 
 ### Step 5: Starting the Snakemake workflow
