@@ -134,13 +134,13 @@ regions:
 
 ### Step 3: Setting environment variable TREE_SEG_DUP_DATA_DIR
 
-Environment variable *TREE_SEG_DUP_DATA_DIR* should point to directory where refrence genomes and simulation will be stored.
+Environment variable *TREE_SEG_DUP_DATA_DIR* should point to a directory where reference genomes and simulation will be stored.
 
 ```
 export TREE_SEG_DUP_DATA_DIR=/directory/where/simulations/will/be/stored
 ```
 
-To set *TREE_SEG_DUP_DATA_DIR* environment variable to current directory, following command shoud be executed.
+To set *TREE_SEG_DUP_DATA_DIR* environment variable to the current directory, following command should be executed:
 
 ```
 export TREE_SEG_DUP_DATA_DIR=`pwd`
@@ -174,7 +174,7 @@ snakemake --cores number_of_threads
 The **Tree-Seg-Dup** simulator is based on the idea of simulating segmental duplications derived from tree topologies proposed in  [^2].
 Simulator was used to validate and benchmark PhaseDancer [^1] assembler.
 
-Embdeded software: 
+Embedded software:
 * [PBSIM2](https://github.com/yukiteruono/pbsim2) - [GNU Public License (Version 2)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 * [Samtools](http://www.htslib.org/) - [Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) Licence](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 * [Bedtools](https://bedtools.readthedocs.io/en/latest/) - [GNU Public License (Version 2)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
