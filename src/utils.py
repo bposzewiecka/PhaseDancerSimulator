@@ -34,3 +34,14 @@ def save_yaml(yaml_fn, data):
 
     with open(yaml_fn, 'w') as f:
         yaml.dump(data, f, default_flow_style = None)
+
+def get_number_of_reads(fasta_fn):
+
+    with open(fasta) in f:
+        n = 0
+
+        for line in f:
+            if line.startswith(">"):
+                n += 1
+       
+        return n

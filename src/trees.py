@@ -10,6 +10,18 @@ TREE_RANDOM = 4
 
 TOPOLOGY = (TREE_FLAT, TREE_BIFURCATING, TREE_CASCADING, TREE_RANDOM)
 
+def get_leaves_number(s):
+
+    s = s.split()
+    topology_name =  s[0]
+
+    if topology_name in ('flat', 'cascading',  'random'):
+        return int(s[1])        
+    elif topology_name == 'bifurcating':
+        sizes = list(map(int, s[1:]))
+        return reduce(lambda x, y: x * y, sizes)
+    else:
+        raise Exception(f'No such tree topology: "{topology_name}".')
 
 def get_topology_and_sizes(s):
     

@@ -1,7 +1,7 @@
-from src.trees import generate_tree, get_topology_and_sizes, save_tree
+from src.trees import generate_tree, get_topology_and_sizes, save_tree, get_leaves_number
 from src.tree_images import plot_tree
 from src.mutation_simulator import mutate_sequences
-from src.utils import  get_fasta_record, get_fasta_record_by_name, save_yaml
+from src.utils import  get_fasta_record, get_fasta_record_by_name, save_yaml, get_number_of_reads
 from src.validation import get_alignment_results, get_variants_validation_table, hamming_distance
 
 import pysam
@@ -17,11 +17,10 @@ SAMTOOLS_BIN_PATH = 'samtools-1.14/samtools'
 BEDTOOLS_BIN_PATH = 'bedtools2/bin/bedtools'
 MINIMAP_BIN_PATH = 'minimap2/minimap2'
 
-OUTPUT_DIR = ''
+OUTPUT_DIR = os.environ['TREE_SEG_DUP_DATA_DIR'] + '/'
 
 PACBIO = 'pacbio'
 NANOPORE = 'nanopore'
-
 
 def get_technology(chemistry):
     if chemistry in ['P4C2', 'P5C3', 'P6C4']:
@@ -45,6 +44,26 @@ def get_output_files_reads_simulation(name, pattern):
    
     return [ pattern.format(**parameters, name=name, sim_number=i, accuracy=accuracy, coverage=coverage, chemistry=chemistry, region=region)  for i in range(parameters['simulations-number']) for coverage in coverages for accuracy in accuracies for chemistry in chemistries for region in regions]
 
+def get_genome_size(name, region_name, all_contigs_fn):
+    
+    parameters = config['simulations'][name]
+    random_prefix_size = parameters.get('random-prefix-size', 0)
+    random_suffix_size = parameters.get('random-suffix-size', 0)
+    ttype = parameters.get('type')
+    topology = parameters.get('topology')
+
+    if ttype == 'leaves': 
+        number_of_contigs = get_leaves_number(topology)
+    else:
+        number_of_contigs = get_number_of_reads(all_contigs_fn)
+
+    region = config['regions'][region_name] 
+    region_start = region['start']
+    region_end = region['end']
+    region_size = region_end - region_start
+
+    return number_of_contigs * ( random_prefix_size + random_suffix_size + region_size)
+
 ruleorder: map_reads > index_reads
            
 rule main:
@@ -52,7 +71,8 @@ rule main:
         [ get_output_files_contig_simulation(name, OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/tree-{region}-{name}-sim{sim_number}.png') for name in config['simulations'].keys()],
         [ get_output_files_contig_simulation(name, OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/starts/contigroot-start-mutatedseq-{region}-{name}-sim{sim_number}.fasta') for name in config['simulations'].keys() if 'start-contig' in config['simulations'][name]],
         [ get_output_files_reads_simulation(name, OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.bam.bai') for name in config['simulations'].keys() ],
-        expand(OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{ttype}-{chemistry}-{accuracy}-{coverage}x/contig{seq_number}.{assembler_name}.{stats}.yaml', name='vsmallflat', sim_number=0, seq_number=0, region ='region0new', ttype= 'leaves', accuracy= 85, chemistry='P6C4', coverage=40, assembler_name='phaseDancer', stats = ['stats', 'variants_stats' ])
+        expand(OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{ttype}-{chemistry}-{accuracy}-{coverage}x/contig{seq_number}.{assembler_name}.{stats}.yaml', name='vsmallflat', sim_number=0, seq_number=0, region ='region0new', ttype= 'leaves', accuracy= 85, chemistry='P6C4', coverage=40, assembler_name='phaseDancer2', stats = ['stats', 'variants_stats' ]),
+        expand(OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{ttype}-{chemistry}-{accuracy}-{coverage}x/assembly.{assembler}.fasta', name='vsmallflat', sim_number=0, seq_number=0, region ='region0new', ttype= 'leaves', accuracy= 85, chemistry='P6C4', coverage=40, assembler = ['wtdbg2', 'canu', 'flye', 'miniasm', 'spades'])
 
 rule simulate_trees_and_mutate:
     input:
@@ -198,7 +218,6 @@ rule identity_statistics_contig:
  
          save_yaml(output.stats, { f"contig{wildcards.seq_number}.{wildcards.assembler_name}" : results } )
 
-
 rule variants_statistics_contig:
     input:
         reference = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta',
@@ -214,3 +233,86 @@ rule variants_statistics_contig:
 
         validation_table =  get_variants_validation_table(reference, assembly, contig, input.vcf)
         save_yaml(output.stats, { f"contig{wildcards.seq_number}.{wildcards.assembler_name}": { "validation-table": validation_table, "hamming-distance": hamming_distance(validation_table) }})
+
+rule assembly_canu:
+    input:      
+        reads = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq',
+        all_contigs = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta'
+    output:
+        contigs = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/assembly.canu.fasta'
+    threads:
+        80
+    log:
+        canu = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/canu/out.log'
+    params:
+        canu_preset = lambda wildcards: '-pacbio' if get_technology(wildcards.chemistry) == PACBIO else '-nanopore',
+        genome_size = lambda wildcards:  get_genome_size(wildcards.name, wildcards.region,  OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta'.format(**wildcards)),
+        output_directory =  OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/canu'
+    shell:
+        """ 
+        canu -p canu -d {params.output_directory} genomeSize={params.genome_size} {params.canu_preset} {input.reads} useGrid=false 2> {log.canu}; 
+        cp {params.output_directory}/canu.contigs.fasta {output.contigs} 
+        """
+
+rule assembly_wtdbg2:
+    input:	
+        reads = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq',
+        all_contigs = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta'
+    output:
+        contigs = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/assembly.wtdbg2.fasta'
+    threads:
+        80
+    log:
+        wtdbg2 = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/wtdbg2/out.log'
+    params:
+        wtdbg2_preset = lambda wildcards: 'sq' if get_technology(wildcards.chemistry) == PACBIO else 'ont',
+        genome_size = lambda wildcards:  get_genome_size(wildcards.name, wildcards.region,  OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta'.format(**wildcards)),
+        output_directory =  OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/wtdbg2'
+    shell:
+       """
+       mkdir -p {params.output_directory}; cd {params.output_directory}; 
+       wtdbg2.pl -x {params.wtdbg2_preset} -t {threads} -o wtdbg2 -g {params.genome_size} {input.reads} 2> {log.wtdbg2};
+       cp {params.output_directory}/wtdbg2.raw.fa {output.contigs}
+       """
+
+rule assembly_flye:
+    input:
+        reads = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq',
+        all_contigs = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta'
+    output:
+        contigs = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/assembly.flye.fasta'
+    threads:
+        80
+    log:
+        flye = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/flye/out.log'
+    params:
+        flye_preset = lambda wildcards: '--pacbio-raw' if get_technology(wildcards.chemistry) == PACBIO else '--nano-raw',
+        genome_size = lambda wildcards:  get_genome_size(wildcards.name, wildcards.region,  OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta'.format(**wildcards)),
+        output_directory =  OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/flye'
+    shell:
+       """
+       flye {params.flye_preset} {input.reads} --out-dir {params.output_directory} --genome-size {params.genome_size} --threads {threads} 2> {log.flye};
+       cp {params.output_directory}/assembly.fasta {output.contigs} 
+       """
+
+rule assembly_miniasm:
+    input:
+        reads = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x.fastq',
+        all_contigs = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta'
+    output:
+        contigs = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/assembly.miniasm.fasta'
+    threads:
+        80
+    log:
+        miniasm = OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/miniasm/out.log'
+    params:
+        miniasm_preset = lambda wildcards: 'ava-pb' if get_technology(wildcards.chemistry) == PACBIO else 'ava-ont',
+        genome_size = lambda wildcards:  get_genome_size(wildcards.name, wildcards.region,  OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/mutatedseq-{region}-{name}-sim{sim_number}-all.fasta'.format(**wildcards)),
+        output_directory =  OUTPUT_DIR + 'data/simulations/{name}/sim{sim_number}/{region}-{name}-sim{sim_number}-{type}-{chemistry}-{accuracy}-{coverage}x/miniasm'
+    shell:
+       """
+       minimap2 -x {params.miniasm_preset} -t {threads} {input.reads} {input.reads} 2> {log.miniasm} | gzip -1 > {params.output_directory}/reads.paf.gz ;
+       miniasm -f {input.reads} {params.output_directory}/reads.paf.gz > {params.output_directory}/reads.gfa 2> {log.miniasm};
+       awk '/^S/{{print ">"$2"\\n"$3}}' {params.output_directory}/reads.gfa > {output.contigs}
+       """
+
