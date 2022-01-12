@@ -132,7 +132,21 @@ regions:
        reference: 'hg38'       
 ```
 
-### Step 3: Placing the reference genomes (or symbolic link to them) used for simulations in the appropriate directory
+### Step 3: Setting environment variable TREE_SEG_DUP_DATA_DIR
+
+Environment variable *TREE_SEG_DUP_DATA_DIR* should point to directory where refrence genomes and simulation will be stored.
+
+```
+export TREE_SEG_DUP_DATA_DIR=/directory/where/simulations/will/be/stored
+```
+
+To set *TREE_SEG_DUP_DATA_DIR* environment variable to current directory, following command shoud be executed.
+
+```
+export TREE_SEG_DUP_DATA_DIR=`pwd`
+```
+
+### Step 4: Placing the reference genomes (or symbolic link to them) used for simulations in the appropriate directory
 
 Reference genomes used for simulations should be placed in the *data/refs* directory.
 Symbolic links to reference genomes can be also used.
@@ -141,13 +155,13 @@ Fasta file or symbolic link to it should have a *.fa* extension.
 The following command can be executed to download *hg38* human genome build.
 
 ```
-mkdir -p data/refs
-cd data/refs
+mkdir -p $TREE_SEG_DUP_DATA_DIR/data/refs
+cd $TREE_SEG_DUP_DATA_DIR/data/refs
 wget https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
 gunzip hg38.fa.gz
 ```
 
-### Step 4: Starting the Snakemake workflow
+### Step 5: Starting the Snakemake workflow
 
 To start the Snakemake workflow, the following line of code should be executed with the *number_of_threads* replaced by the maximum number of threads that can be used for simulations.
 
