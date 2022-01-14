@@ -132,7 +132,7 @@ regions:
        reference: 'hg38'       
 ```
 
-### Step 3: Setting environment variables TREE_SEG_DUP and TREE_SEG_DUP_DATA_DIR
+### Step 3: Setting environment variables TREE_SEG_DUP_DIR and TREE_SEG_DUP_DATA_DIR
 
 
 Environment variable *TREE_SEG_DUP_DIR* should point to a directory tree-seg-dup cloned from github repository.
