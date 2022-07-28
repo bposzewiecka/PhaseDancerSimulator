@@ -17,10 +17,10 @@ To account for a complex history of the formation of segmental duplications **Ph
 To clone PhaseDancerSimulator repository and installing dependencies, the following lines should be executed:
 
 ```
-git clone https://github.com/bposzewiecka/tree-seg-dup.git
-cd tree-seg-dup
-python3 -m venv tree-seg-dup_venv
-source tree-seg-dup_venv/bin/activate
+git clone https://github.com/bposzewiecka/PhaseDancerSimulator.git
+cd PhaseDancerSimulator
+python3 -m venv PhaseDancerSimulator_venv
+source PhaseDancerSimulator_venv/bin/activate
 pip install -r requirements.txt
 ./install.sh
 ```
