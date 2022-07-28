@@ -1,8 +1,8 @@
-# Tree-Seg-Dup - Simulator of collapsed segmental duplications
+# PhaseDancerSimulator - Simulator of collapsed segmental duplications
 
-To account for a complex history of the formation of segmental duplications **Tree-Seg-Dup** simulates such regions based on the tree topology. Fragment of the reference genome is assigned to the root of the tree. Child sequences are created by copying a parent node sequence and mutating each base at a fixed per base rate. Then, long-reads (PacBio or Oxford Nanopore) are simulated using [PBSIM2](https://github.com/yukiteruono/pbsim2).
+To account for a complex history of the formation of segmental duplications **PhaseDancerSimulator** simulates such regions based on the tree topology. Fragment of the reference genome is assigned to the root of the tree. Child sequences are created by copying a parent node sequence and mutating each base at a fixed per base rate. Then, long-reads (PacBio or Oxford Nanopore) are simulated using [PBSIM2](https://github.com/yukiteruono/pbsim2).
 
-**Tree-Seg-Dup** outputs:
+**PhaseDancerSimulator** outputs:
 
 * image presenting tree topology.
 * XML file storing tree topology ([gexf](https://gephi.org/gexf/format/)).
@@ -12,9 +12,9 @@ To account for a complex history of the formation of segmental duplications **Tr
  
 ## Configuration
 
-### Step 1: Cloning the Tree-Seg-Dup repository and installing dependencies
+### Step 1: Cloning the PhaseDancerSimulator repository and installing dependencies
 
-To clone Tree-Seg-Dup repository and installing dependencies, the following lines should be executed:
+To clone PhaseDancerSimulator repository and installing dependencies, the following lines should be executed:
 
 ```
 git clone https://github.com/bposzewiecka/tree-seg-dup.git
@@ -135,10 +135,10 @@ regions:
 ### Step 3: Setting environment variables TREE_SEG_DUP_DIR and TREE_SEG_DUP_DATA_DIR
 
 
-Environment variable *TREE_SEG_DUP_DIR* should point to a directory tree-seg-dup cloned from github repository.
+Environment variable *TREE_SEG_DUP_DIR* should point to a directory PhaseDancerSimulator cloned from github repository.
 
 ```
-export TREE_SEG_DUP_DIR=/path/to/tree-seg-dup
+export TREE_SEG_DUP_DIR=/path/to/PhaseDancerSimulator
 ```
 
 Environment variable *TREE_SEG_DUP_DATA_DIR* should point to a directory where reference genomes and simulation will be stored.
@@ -178,7 +178,7 @@ snakemake --cores number_of_threads
 
 ## Note
 
-The **Tree-Seg-Dup** simulator is based on the idea of simulating segmental duplications derived from tree topologies proposed in  [^2].
+The **PhaseDancerSimulator** simulator is based on the idea of simulating segmental duplications derived from tree topologies proposed in  [^2].
 Simulator was used to validate and benchmark PhaseDancer [^1] assembler.
 
 Embedded software:
