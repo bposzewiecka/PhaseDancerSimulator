@@ -2,9 +2,9 @@ simulations:
     myflat:
         topology: 'flat 10'
         simulations-number: 1
-        regions: ['chr1_30']
+        regions: [ region1, region2 ]
         mutation-rates: [0.001, 0.005]
-        chemistry: 'P6C4'
+        chemistries: ['P6C4', 'R103']
         coverages: [40, 60, 80]
         accuracies: [85, 90, 95]
         length-mean: 18000
@@ -13,15 +13,22 @@ simulations:
     myrandom:
         topology: 'random 10'
         simulations-number: 4
-        regions: ['chr1_30']
+        regions: [ region2 ]
         mutation-rates: [0.001, 0.005]
-        chemistry: 'P6C4'
+        chemistries: ['P6C4', 'R103']
         coverages: [40, 60, 80]
         accuracies: [85, 90, 95]
         length-mean: 18000
         length-sd: 3000
         type: 'all'
 regions:
-    chr1_30:
-       coordinates: 'chr1:30000000-30200000'
+    region1:
+       chrom: 'chr1'
+       start: 30000000
+       end: 30500000
        reference: 'hg38'
+    region2:
+       chrom: 'chr2'
+       start: 60000000
+       end: 60500000
+       reference: 'hg38'    
