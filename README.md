@@ -132,25 +132,25 @@ regions:
        reference: 'hg38'       
 ```
 
-### Step 3: Setting environment variables TREE_SEG_DUP_DIR and TREE_SEG_DUP_DATA_DIR
+### Step 3: Setting environment variables PHASEDANCER_SIMULATOR_DIR and PHASEDANCER_SIMULATOR_DATA_DIR
 
 
-Environment variable *TREE_SEG_DUP_DIR* should point to a directory PhaseDancerSimulator cloned from github repository.
-
-```
-export TREE_SEG_DUP_DIR=/path/to/PhaseDancerSimulator
-```
-
-Environment variable *TREE_SEG_DUP_DATA_DIR* should point to a directory where reference genomes and simulation will be stored.
+Environment variable *PHASEDANCER_SIMULATOR_DIR* should point to a directory PhaseDancerSimulator cloned from github repository.
 
 ```
-export TREE_SEG_DUP_DATA_DIR=/directory/where/simulations/will/be/stored
+export PHASEDANCER_SIMULATOR_DIR=/path/to/PhaseDancerSimulator
 ```
 
-To set *TREE_SEG_DUP_DATA_DIR* environment variable to the current directory, following command should be executed:
+Environment variable *PHASEDANCER_SIMULATOR_DATA_DIR* should point to a directory where reference genomes and simulation will be stored.
 
 ```
-export TREE_SEG_DUP_DATA_DIR=`pwd`
+export PHASEDANCER_SIMULATOR_DATA_DIR=/directory/where/simulations/will/be/stored
+```
+
+To set *PHASEDANCER_SIMULATOR_DATA_DIR* environment variable to the current directory, following command should be executed:
+
+```
+export PHASEDANCER_SIMULATOR_DATA_DIR=`pwd`
 ```
 
 ### Step 4: Placing the reference genomes (or symbolic link to them) used for simulations in the appropriate directory
@@ -162,10 +162,10 @@ Fasta file or symbolic link to it should have a *.fa* extension.
 The following command can be executed to download *hg38* human genome build.
 
 ```
-mkdir -p $TREE_SEG_DUP_DATA_DIR/data/refs
-cd $TREE_SEG_DUP_DATA_DIR/data/refs
-wget --directory-prefix=$TREE_SEG_DUP_DATA_DIR  https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
-gunzip $TREE_SEG_DUP_DATA_DIR/hg38.fa.gz
+mkdir -p $PHASEDANCER_SIMULATOR_DATA_DIR/data/refs
+cd $PHASEDANCER_SIMULATOR_DATA_DIR/data/refs
+wget --directory-prefix=$PHASEDANCER_SIMULATOR_DATA_DIR  https://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz
+gunzip $PHASEDANCER_SIMULATOR_DATA_DIR/hg38.fa.gz
 ```
 
 ### Step 5: Starting the Snakemake workflow
