@@ -2,7 +2,7 @@ simulations:
     myflat:
         topology: 'flat 10'
         simulations-number: 1
-        region: 'chr1_30'
+        regions: ['chr1_30']
         mutation-rates: [0.001, 0.005]
         chemistry: 'P6C4'
         coverages: [40, 60, 80]
@@ -13,7 +13,7 @@ simulations:
     myrandom:
         topology: 'random 10'
         simulations-number: 4
-        region: 'chr1_30'
+        regions: ['chr1_30']
         mutation-rates: [0.001, 0.005]
         chemistry: 'P6C4'
         coverages: [40, 60, 80]
