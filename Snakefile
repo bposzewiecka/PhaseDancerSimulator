@@ -17,7 +17,7 @@ SAMTOOLS_BIN_PATH = 'samtools-1.14/samtools'
 BEDTOOLS_BIN_PATH = 'bedtools2/bin/bedtools'
 MINIMAP_BIN_PATH = 'minimap2/minimap2'
 
-OUTPUT_DIR = os.environ['TREE_SEG_DUP_DATA_DIR'] + '/'
+OUTPUT_DIR = os.environ['PHASEDANCER_SIMULATOR_DATA_DIR'] + '/'
 
 PACBIO = 'pacbio'
 NANOPORE = 'nanopore'
@@ -122,7 +122,7 @@ rule simulate_reads:
         " --prefix sim --id-prefix sim "
         " --accuracy-mean 0.{wildcards.accuracy} "
 	" --difference-ratio {params.difference_ratio}  "
-        " --depth {wildcards.coverage} --seed " + str(seed) + " $SIM_PWD/{input.ref} 2> $SIM_PWD/{log.pbsim}; "
+        " --depth {wildcards.coverage} --seed " + str(seed) + " {input.ref} 2> $SIM_PWD/{log.pbsim}; "
         " cd $SIM_PWD ; "
         " cat {params.sim_dir}/*.fastq > {output} "
 
