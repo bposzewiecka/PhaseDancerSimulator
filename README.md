@@ -17,7 +17,7 @@ To account for a complex history of the formation of segmental duplications **Ph
 To clone PhaseDancerSimulator repository and installing dependencies, the following lines should be executed:
 
 ```
-git clone https://github.com/bposzewiecka/PhaseDancerSimulator.git
+git clone --recurse-submodules https://github.com/bposzewiecka/PhaseDancerSimulator.git
 cd PhaseDancerSimulator
 python3 -m venv PhaseDancerSimulator_venv
 source PhaseDancerSimulator_venv/bin/activate
